@@ -178,32 +178,28 @@ Het contactformulier gebruikt:
 
 ### 1️⃣ Cloudflare Turnstile Setup
 
-**Stap 1 - Maak Turnstile Site aan:**
-```
-1. Ga naar: https://dash.cloudflare.com/?to=/:account/turnstile
-2. Klik "Add Site"
-3. Site name: Avenix Contact Form
-4. Domain: avenix.nl
-5. Widget mode: Managed
-6. Kopieer de SITE KEY en SECRET KEY
-```
+**✅ Turnstile is al geconfigureerd!**
 
-**Stap 2 - Voeg Sitekey toe aan HTML:**
+Jouw Turnstile keys:
+- **Site Key (in code):** `0x4AAAAAAB9A8PLrRD7V4m-s` ✅ Toegevoegd aan `contact.html`
+- **Secret Key (in env vars):** `0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo` ⚠️ Moet je toevoegen aan Cloudflare
 
-Open `contact.html` en vervang `YOUR_TURNSTILE_SITEKEY`:
-```html
-<div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="dark"></div>
+**BELANGRIJK - Voeg Secret Key toe aan Cloudflare:**
 ```
-
-**Stap 3 - Voeg Secret toe aan Cloudflare:**
-```
-1. Cloudflare Dashboard → Workers & Pages → jouw-site
-2. Settings → Environment Variables
-3. Add Variable:
+1. Ga naar: Cloudflare Dashboard → Workers & Pages → [avenix-site]
+2. Klik op: Settings → Environment Variables
+3. Klik: Add Variable
+4. Production environment:
    Name: TURNSTILE_SECRET_KEY
-   Value: [jouw secret key]
-4. Deploy (Production + Preview)
+   Value: 0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo
+5. Preview environment (optioneel - voor testing):
+   Name: TURNSTILE_SECRET_KEY
+   Value: 0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo
+6. Klik: Save
+7. Redeploy je site (gebeurt automatisch bij volgende git push)
 ```
+
+> ⚠️ **Security note:** Secret keys horen NOOIT in je code, alleen in Environment Variables!
 
 ### 2️⃣ SMTP Email Setup
 
@@ -265,13 +261,13 @@ Password: [SendGrid API key]
 
 Voor een complete werkende setup heb je deze variabelen nodig:
 
-| Variable | Required | Description | Example |
-|----------|----------|-------------|---------|
-| `TURNSTILE_SECRET_KEY` | ✅ Ja | Cloudflare Turnstile secret | `0x4AAA...` |
-| `SMTP_HOST` | ✅ Ja | SMTP server hostname | `smtp.gmail.com` |
+| Variable | Required | Description | Jouw waarde |
+|----------|----------|-------------|-------------|
+| `TURNSTILE_SECRET_KEY` | ✅ Ja | Cloudflare Turnstile secret | `0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo` |
+| `SMTP_HOST` | ✅ Ja | SMTP server hostname | `smtp.gmail.com` (of jouw provider) |
 | `SMTP_PORT` | ✅ Ja | SMTP server poort | `587` |
 | `SMTP_USERNAME` | ✅ Ja | SMTP authenticatie username | `info@avenix.nl` |
-| `SMTP_PASSWORD` | ✅ Ja | SMTP authenticatie password | `[app password]` |
+| `SMTP_PASSWORD` | ✅ Ja | SMTP authenticatie password | `[verkrijg van SMTP provider]` |
 | `MAIL_TO` | ✅ Ja | Ontvanger van formulieren | `info@avenix.nl` |
 | `MAIL_FROM` | ✅ Ja | Afzender naam en email | `Avenix <no-reply@avenix.nl>` |
 
