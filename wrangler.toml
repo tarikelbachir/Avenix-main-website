@@ -1,0 +1,23 @@
+# Cloudflare Pages Configuration (optional)
+# Dit bestand is NIET verplicht voor Cloudflare Pages
+# Het wordt automatisch gegenereerd bij deployment
+
+name = "avenix-website"
+compatibility_date = "2025-01-22"
+
+# Pages configuration
+pages_build_output_dir = "."
+
+# Environment variables (set via Dashboard)
+# [env.production.vars]
+# RESEND_API_KEY = "set_via_dashboard"
+
+# Voor lokale development met Wrangler
+[dev]
+port = 8788
+
+# Optional: Custom routes
+# [[routes]]
+# pattern = "/send-email"
+# script = "functions/send-email.js"
+

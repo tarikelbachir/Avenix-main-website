@@ -1,0 +1,16 @@
+# Cloudflare Pages Redirects
+# https://developers.cloudflare.com/pages/platform/redirects/
+
+# Redirect oude URLs (als nodig)
+# /oude-pagina.html /nieuwe-pagina.html 301
+
+# WWW naar non-WWW (gebeurt automatisch via Cloudflare)
+# https://www.avenix.nl/* https://avenix.nl/:splat 301
+
+# Trailing slash redirects (optioneel)
+# /contact /contact.html 301
+# /diensten /diensten.html 301
+
+# 404 fallback
+/* /404.html 404
+
