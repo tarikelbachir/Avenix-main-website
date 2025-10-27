@@ -3,7 +3,7 @@
 **Modern webdesign bureau website** met serverless email functionaliteit.
 
 [![Cloudflare Pages](https://img.shields.io/badge/Hosted%20on-Cloudflare%20Pages-orange)](https://pages.cloudflare.com)
-[![Resend Email](https://img.shields.io/badge/Email-Resend%20API-blue)](https://resend.com)
+[![Nodemailer](https://img.shields.io/badge/Email-Nodemailer%20SMTP-blue)](https://nodemailer.com)
 
 ---
 
@@ -12,7 +12,7 @@
 - **Frontend:** HTML5, Tailwind CSS, Vanilla JavaScript
 - **Hosting:** Cloudflare Pages (Edge deployment)
 - **Functions:** Cloudflare Workers (Serverless)
-- **Email:** Resend API
+- **Email:** Nodemailer (SMTP)
 - **Security:** CSP, HSTS, Security Headers, Cloudflare Turnstile
 - **SEO:** Sitemap, robots.txt, Open Graph
 
@@ -82,16 +82,16 @@ Avenix-main-website/
 ### Vereisten:
 - GitHub account
 - Cloudflare account (gratis)
-- Resend account (gratis 100 emails/dag)
+- SMTP account (Google Workspace, SendGrid, Mailgun, etc.)
 
 ### 3-stappen deployment:
 
-#### 1️⃣ Email Setup (5 min)
+#### 1️⃣ SMTP Setup (5 min)
 ```
-1. Signup: https://resend.com
-2. Voeg domein toe: avenix.nl
-3. Verifieer DNS records
-4. Genereer API key
+1. Kies SMTP provider (Gmail/SendGrid/Mailgun)
+2. Verkrijg SMTP credentials (host, port, username, password)
+3. Voor Gmail: genereer App Password
+4. Noteer credentials voor stap 3
 ```
 
 #### 2️⃣ GitHub Push (2 min)
@@ -109,7 +109,10 @@ git push -u origin main
 2. Connect to Git → Select repo
 3. Framework: None | Build: [empty] | Output: /
 4. Deploy
-5. Add Environment Variable: RESEND_API_KEY
+5. Add Environment Variables: 
+   - TURNSTILE_SECRET_KEY
+   - SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD
+   - MAIL_TO, MAIL_FROM
 6. Add Custom Domain: avenix.nl
 ```
 
@@ -139,9 +142,15 @@ cd avenix-website
 ```
 
 ### Environment Variables:
-Kopieer `.env.example` naar `.env` en vul in:
+Maak `.env` bestand voor lokaal testen:
 ```env
-RESEND_API_KEY=re_your_api_key_here
+TURNSTILE_SECRET_KEY=0x4AAAAAAAAxxx
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=info@avenix.nl
+SMTP_PASSWORD=your_app_password_here
+MAIL_TO=info@avenix.nl
+MAIL_FROM=Avenix <no-reply@avenix.nl>
 ```
 
 ### Testen:
@@ -158,9 +167,14 @@ wrangler pages dev .
 ### Overzicht
 Het contactformulier gebruikt:
 - **Cloudflare Turnstile** - Bot bescherming (CAPTCHA alternatief)
-- **Resend API** - Email verzending naar `info@avenix.nl`
+- **Nodemailer (SMTP)** - Email verzending naar `info@avenix.nl`
 - **Honeypot field** - Extra spam bescherming
 - **Input validatie** - Server-side validatie
+
+> ⚠️ **Let op:** Nodemailer werkt **NIET** in Cloudflare Pages Functions omdat deze draaien op V8 runtime (niet Node.js). Voor productie moet je een alternatieve oplossing gebruiken zoals:
+> - Native SMTP via fetch (bijv. SendGrid API, Mailgun API)
+> - Cloudflare Email Workers
+> - Externe webhook service
 
 ### 1️⃣ Cloudflare Turnstile Setup
 
@@ -191,37 +205,53 @@ Open `contact.html` en vervang `YOUR_TURNSTILE_SITEKEY`:
 4. Deploy (Production + Preview)
 ```
 
-### 2️⃣ Resend Email Setup
+### 2️⃣ SMTP Email Setup
 
-**DNS Records (via Cloudflare):**
-```
-Type: TXT
-Name: @
-Content: [Resend verification key]
+**Stap 1 - SMTP Credentials verkrijgen:**
 
-Type: CNAME  
-Name: resend._domainkey
-Content: [Resend DKIM key]
-```
+Je kunt elke SMTP provider gebruiken. Voorbeelden:
 
-**Stap 1 - Genereer API Key:**
+**Via Google Workspace (als je al Google Workspace hebt):**
 ```
-1. Ga naar: https://resend.com/api-keys
-2. Klik "Create API Key"
-3. Name: Avenix Production
-4. Permission: Sending access
-5. Kopieer de API key (begint met `re_`)
+Host: smtp.gmail.com
+Port: 587
+Username: info@avenix.nl
+Password: [App-specifiek wachtwoord]
+
+1. Google Admin → Gebruiker → info@avenix.nl
+2. Security → App passwords
+3. Genereer nieuw app password
 ```
 
-**Stap 2 - Voeg toe aan Cloudflare:**
+**Via TransIP (als je domein hosting hebt):**
+```
+Host: smtp.transip.email
+Port: 587
+Username: info@avenix.nl
+Password: [email wachtwoord]
+```
+
+**Via externe SMTP service (bijv. SendGrid, Mailgun):**
+```
+SendGrid:
+Host: smtp.sendgrid.net
+Port: 587
+Username: apikey
+Password: [SendGrid API key]
+```
+
+**Stap 2 - Voeg credentials toe aan Cloudflare:**
 ```
 1. Cloudflare Dashboard → Workers & Pages → jouw-site
 2. Settings → Environment Variables
 3. Add Variables:
    
-   RESEND_API_KEY = re_jouw_api_key_hier
+   SMTP_HOST = smtp.gmail.com (of jouw provider)
+   SMTP_PORT = 587
+   SMTP_USERNAME = info@avenix.nl
+   SMTP_PASSWORD = [jouw wachtwoord/app password]
    MAIL_TO = info@avenix.nl
-   MAIL_FROM = Avenix <no-reply@avenix.nl>  (optioneel)
+   MAIL_FROM = Avenix <no-reply@avenix.nl>
 
 4. Deploy to Production + Preview
 ```
@@ -233,14 +263,17 @@ Content: [Resend DKIM key]
 
 ### 3️⃣ Environment Variables Overzicht
 
-Voor een complete werkende setup heb je deze 3 variabelen nodig:
+Voor een complete werkende setup heb je deze variabelen nodig:
 
 | Variable | Required | Description | Example |
 |----------|----------|-------------|---------|
 | `TURNSTILE_SECRET_KEY` | ✅ Ja | Cloudflare Turnstile secret | `0x4AAA...` |
-| `RESEND_API_KEY` | ✅ Ja | Resend API key voor email | `re_123...` |
+| `SMTP_HOST` | ✅ Ja | SMTP server hostname | `smtp.gmail.com` |
+| `SMTP_PORT` | ✅ Ja | SMTP server poort | `587` |
+| `SMTP_USERNAME` | ✅ Ja | SMTP authenticatie username | `info@avenix.nl` |
+| `SMTP_PASSWORD` | ✅ Ja | SMTP authenticatie password | `[app password]` |
 | `MAIL_TO` | ✅ Ja | Ontvanger van formulieren | `info@avenix.nl` |
-| `MAIL_FROM` | ⚪ Nee | Afzender naam en email | `Avenix <no-reply@avenix.nl>` |
+| `MAIL_FROM` | ✅ Ja | Afzender naam en email | `Avenix <no-reply@avenix.nl>` |
 
 **Waar te configureren:**
 ```
@@ -310,10 +343,12 @@ curl -X POST https://avenix.nl/api/contact \
 - ✅ Check of domein toegevoegd is in Turnstile settings
 
 **Email niet ontvangen:**
-- ✅ Check `RESEND_API_KEY` in Environment Variables
-- ✅ Verify domein status in Resend Dashboard (moet "Verified" zijn)
-- ✅ Check DNS records (SPF, DKIM) zijn correct
+- ✅ Check alle SMTP variabelen in Environment Variables (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`)
+- ✅ Test SMTP credentials in email client (Outlook/Thunderbird)
+- ✅ Check firewall/port 587 toegankelijk
+- ✅ Voor Gmail: gebruik app-specifiek wachtwoord (niet normaal wachtwoord)
 - ✅ Check spam folder
+- ✅ Check Cloudflare Functions logs voor SMTP errors
 
 **"Invalid input" error:**
 - ✅ Alle verplichte velden ingevuld? (name, email, message)
@@ -455,11 +490,13 @@ git push
 
 **Email niet ontvangen:**
 ```
-1. Check Resend domein verificatie: https://resend.com/domains
-2. Verify RESEND_API_KEY in Cloudflare Environment Variables
-3. Check Cloudflare Functions logs voor errors
-4. Test met: curl -X POST https://avenix.nl/api/contact [see above]
-5. Check spam folder
+1. Check alle SMTP Environment Variables (SMTP_HOST, SMTP_PORT, etc.)
+2. Test SMTP credentials handmatig in email client
+3. Check Cloudflare Functions logs voor SMTP errors
+4. Voor Gmail: gebruik App Password, niet normaal wachtwoord
+5. Test met: curl -X POST https://avenix.nl/api/contact [see above]
+6. Check spam folder
+7. Verify poort 587 niet geblokkeerd door firewall
 ```
 
 **Form error in browser:**
@@ -495,12 +532,14 @@ git push
 - **Cloudflare Pages:** https://developers.cloudflare.com/pages/
 - **Cloudflare Workers:** https://developers.cloudflare.com/workers/
 - **Cloudflare Turnstile:** https://developers.cloudflare.com/turnstile/
-- **Resend API:** https://resend.com/docs
-- **Resend with Cloudflare:** https://resend.com/docs/send-with-cloudflare-workers
+- **Nodemailer:** https://nodemailer.com/about/
+- **Gmail SMTP:** https://support.google.com/mail/answer/7126229
+- **SendGrid SMTP:** https://docs.sendgrid.com/for-developers/sending-email/integrating-with-the-smtp-api
 
 ### Community:
 - **Cloudflare Discord:** https://discord.gg/cloudflaredev
-- **Resend Support:** support@resend.com
+- **Nodemailer GitHub:** https://github.com/nodemailer/nodemailer
+- **Stack Overflow:** https://stackoverflow.com/questions/tagged/nodemailer
 
 ---
 

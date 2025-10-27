@@ -6,9 +6,11 @@
  * Features:
  * - Cloudflare Turnstile verification
  * - Honeypot spam protection
- * - Email via Resend API
+ * - Email via Nodemailer (SMTP)
  * - Input validation
  */
+
+import nodemailer from "nodemailer";
 
 export const onRequestPost = async ({ request, env }) => {
   try {
@@ -70,35 +72,35 @@ export const onRequestPost = async ({ request, env }) => {
       return json({ error: "Beveiligingsverificatie mislukt. Probeer opnieuw." }, 400);
     }
 
-    // Send email via Resend API
-    const emailPayload = {
+    // Send email via Nodemailer (SMTP)
+    const transporter = nodemailer.createTransport({
+      host: env.SMTP_HOST,
+      port: Number(env.SMTP_PORT),
+      secure: false,
+      auth: {
+        user: env.SMTP_USERNAME,
+        pass: env.SMTP_PASSWORD
+      }
+    });
+
+    const mailOptions = {
       from: env.MAIL_FROM || "Avenix <no-reply@avenix.nl>",
-      to: [env.MAIL_TO || "info@avenix.nl"],
-      reply_to: email,
+      to: env.MAIL_TO || "info@avenix.nl",
+      replyTo: email,
       subject: _subject || `Nieuw contactformulier: ${name}`,
       html: renderHtml({ name, email, message, phone, company: company || "Niet opgegeven", subject: _subject })
     };
 
-    const emailResp = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${env.RESEND_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(emailPayload)
-    });
-
-    if (!emailResp.ok) {
-      const errorText = await emailResp.text();
-      console.error("Resend API error:", errorText);
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent successfully:", info.messageId);
+    } catch (emailError) {
+      console.error("SMTP error:", emailError);
       return json({ 
         error: "Er ging iets mis bij het verzenden. Probeer het opnieuw of bel ons op +31 6 8100 1053",
-        detail: errorText 
+        detail: String(emailError)
       }, 500);
     }
-
-    const emailResult = await emailResp.json();
-    console.log("Email sent successfully:", emailResult.id);
 
     return json({ ok: true, message: "Bericht verzonden!" }, 200);
 

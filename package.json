@@ -1,0 +1,17 @@
+{
+  "name": "avenix-website",
+  "version": "1.0.0",
+  "description": "Avenix website met contactformulier via Nodemailer",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev .",
+    "deploy": "wrangler pages deploy ."
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.8"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
+
