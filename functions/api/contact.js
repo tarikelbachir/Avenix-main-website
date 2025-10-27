@@ -6,11 +6,9 @@
  * Features:
  * - Cloudflare Turnstile verification
  * - Honeypot spam protection
- * - Email via Nodemailer (SMTP)
+ * - Email via MailChannels (Free SMTP for Cloudflare)
  * - Input validation
  */
-
-import nodemailer from "nodemailer";
 
 export const onRequestPost = async ({ request, env }) => {
   try {
@@ -72,30 +70,53 @@ export const onRequestPost = async ({ request, env }) => {
       return json({ error: "Beveiligingsverificatie mislukt. Probeer opnieuw." }, 400);
     }
 
-    // Send email via Nodemailer (SMTP)
-    const transporter = nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: Number(env.SMTP_PORT),
-      secure: false,
-      auth: {
-        user: env.SMTP_USERNAME,
-        pass: env.SMTP_PASSWORD
-      }
-    });
-
-    const mailOptions = {
-      from: env.MAIL_FROM || "Avenix <no-reply@avenix.nl>",
-      to: env.MAIL_TO || "info@avenix.nl",
-      replyTo: email,
+    // Send email via MailChannels (Free for Cloudflare Workers)
+    const emailPayload = {
+      personalizations: [
+        {
+          to: [{ email: env.MAIL_TO || "info@avenix.nl" }],
+          dkim_domain: "avenix.nl",
+          dkim_selector: "mailchannels"
+        }
+      ],
+      from: {
+        email: "no-reply@avenix.nl",
+        name: "Avenix Website"
+      },
+      reply_to: {
+        email: email,
+        name: name
+      },
       subject: _subject || `Nieuw contactformulier: ${name}`,
-      html: renderHtml({ name, email, message, phone, company: company || "Niet opgegeven", subject: _subject })
+      content: [
+        {
+          type: "text/html",
+          value: renderHtml({ name, email, message, phone, company: company || "Niet opgegeven", subject: _subject })
+        }
+      ]
     };
 
     try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log("Email sent successfully:", info.messageId);
+      const emailResp = await fetch("https://api.mailchannels.net/tx/v1/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(emailPayload)
+      });
+
+      if (!emailResp.ok) {
+        const errorText = await emailResp.text();
+        console.error("MailChannels error:", errorText);
+        return json({ 
+          error: "Er ging iets mis bij het verzenden. Probeer het opnieuw of bel ons op +31 6 8100 1053",
+          detail: errorText
+        }, 500);
+      }
+
+      console.log("Email sent successfully via MailChannels");
     } catch (emailError) {
-      console.error("SMTP error:", emailError);
+      console.error("Email send error:", emailError);
       return json({ 
         error: "Er ging iets mis bij het verzenden. Probeer het opnieuw of bel ons op +31 6 8100 1053",
         detail: String(emailError)

@@ -3,7 +3,7 @@
 **Modern webdesign bureau website** met serverless email functionaliteit.
 
 [![Cloudflare Pages](https://img.shields.io/badge/Hosted%20on-Cloudflare%20Pages-orange)](https://pages.cloudflare.com)
-[![Nodemailer](https://img.shields.io/badge/Email-Nodemailer%20SMTP-blue)](https://nodemailer.com)
+[![MailChannels](https://img.shields.io/badge/Email-MailChannels-blue)](https://mailchannels.com)
 
 ---
 
@@ -12,7 +12,7 @@
 - **Frontend:** HTML5, Tailwind CSS, Vanilla JavaScript
 - **Hosting:** Cloudflare Pages (Edge deployment)
 - **Functions:** Cloudflare Workers (Serverless)
-- **Email:** Nodemailer (SMTP)
+- **Email:** MailChannels (Gratis voor Cloudflare)
 - **Security:** CSP, HSTS, Security Headers, Cloudflare Turnstile
 - **SEO:** Sitemap, robots.txt, Open Graph
 
@@ -82,16 +82,14 @@ Avenix-main-website/
 ### Vereisten:
 - GitHub account
 - Cloudflare account (gratis)
-- SMTP account (Google Workspace, SendGrid, Mailgun, etc.)
+- (Geen extra accounts nodig - MailChannels is gratis!)
 
 ### 3-stappen deployment:
 
-#### 1️⃣ SMTP Setup (5 min)
+#### 1️⃣ Turnstile Setup (2 min)
 ```
-1. Kies SMTP provider (Gmail/SendGrid/Mailgun)
-2. Verkrijg SMTP credentials (host, port, username, password)
-3. Voor Gmail: genereer App Password
-4. Noteer credentials voor stap 3
+✅ Al gedaan! Jouw keys zijn al geconfigureerd.
+Voeg alleen de secret key toe aan Environment Variables (zie stap 3)
 ```
 
 #### 2️⃣ GitHub Push (2 min)
@@ -110,9 +108,8 @@ git push -u origin main
 3. Framework: None | Build: [empty] | Output: /
 4. Deploy
 5. Add Environment Variables: 
-   - TURNSTILE_SECRET_KEY
-   - SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD
-   - MAIL_TO, MAIL_FROM
+   - TURNSTILE_SECRET_KEY (verplicht)
+   - MAIL_TO (optioneel, default: info@avenix.nl)
 6. Add Custom Domain: avenix.nl
 ```
 
@@ -144,13 +141,8 @@ cd avenix-website
 ### Environment Variables:
 Maak `.env` bestand voor lokaal testen:
 ```env
-TURNSTILE_SECRET_KEY=0x4AAAAAAAAxxx
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USERNAME=info@avenix.nl
-SMTP_PASSWORD=your_app_password_here
+TURNSTILE_SECRET_KEY=0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo
 MAIL_TO=info@avenix.nl
-MAIL_FROM=Avenix <no-reply@avenix.nl>
 ```
 
 ### Testen:
@@ -167,14 +159,11 @@ wrangler pages dev .
 ### Overzicht
 Het contactformulier gebruikt:
 - **Cloudflare Turnstile** - Bot bescherming (CAPTCHA alternatief)
-- **Nodemailer (SMTP)** - Email verzending naar `info@avenix.nl`
+- **MailChannels** - **GRATIS** email verzending specifiek voor Cloudflare Workers
 - **Honeypot field** - Extra spam bescherming
 - **Input validatie** - Server-side validatie
 
-> ⚠️ **Let op:** Nodemailer werkt **NIET** in Cloudflare Pages Functions omdat deze draaien op V8 runtime (niet Node.js). Voor productie moet je een alternatieve oplossing gebruiken zoals:
-> - Native SMTP via fetch (bijv. SendGrid API, Mailgun API)
-> - Cloudflare Email Workers
-> - Externe webhook service
+> ✅ **MailChannels** is speciaal gemaakt voor Cloudflare Workers en **100% gratis**. Geen API keys, geen credit card, geen limiet!
 
 ### 1️⃣ Cloudflare Turnstile Setup
 
@@ -201,61 +190,36 @@ Jouw Turnstile keys:
 
 > ⚠️ **Security note:** Secret keys horen NOOIT in je code, alleen in Environment Variables!
 
-### 2️⃣ SMTP Email Setup
+### 2️⃣ MailChannels Email Setup
 
-**Stap 1 - SMTP Credentials verkrijgen:**
+**✅ MailChannels werkt out-of-the-box!**
 
-Je kunt elke SMTP provider gebruiken. Voorbeelden:
+MailChannels is **gratis** en speciaal voor Cloudflare. Geen setup nodig, geen API keys, geen limiet!
 
-**Via Google Workspace (als je al Google Workspace hebt):**
+**Wat gebeurt er automatisch:**
+- Emails worden verzonden via MailChannels API
+- **From:** `no-reply@avenix.nl`
+- **To:** `info@avenix.nl` (configureerbaar via `MAIL_TO`)
+- **Reply-to:** Email van de gebruiker (voor directe antwoorden)
+
+**Optioneel - DKIM voor betere deliverability:**
+
+Voor betere email deliverability (minder spam folder), voeg deze DNS record toe:
+
 ```
-Host: smtp.gmail.com
-Port: 587
-Username: info@avenix.nl
-Password: [App-specifiek wachtwoord]
-
-1. Google Admin → Gebruiker → info@avenix.nl
-2. Security → App passwords
-3. Genereer nieuw app password
-```
-
-**Via TransIP (als je domein hosting hebt):**
-```
-Host: smtp.transip.email
-Port: 587
-Username: info@avenix.nl
-Password: [email wachtwoord]
+Type: TXT
+Name: mailchannels._domainkey.avenix.nl
+Value: v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC...
 ```
 
-**Via externe SMTP service (bijv. SendGrid, Mailgun):**
-```
-SendGrid:
-Host: smtp.sendgrid.net
-Port: 587
-Username: apikey
-Password: [SendGrid API key]
-```
+Haal de volledige DKIM key op via: https://mailchannels.zendesk.com/hc/en-us/articles/7122849237389
 
-**Stap 2 - Voeg credentials toe aan Cloudflare:**
+**Environment variable (optioneel):**
 ```
-1. Cloudflare Dashboard → Workers & Pages → jouw-site
-2. Settings → Environment Variables
-3. Add Variables:
-   
-   SMTP_HOST = smtp.gmail.com (of jouw provider)
-   SMTP_PORT = 587
-   SMTP_USERNAME = info@avenix.nl
-   SMTP_PASSWORD = [jouw wachtwoord/app password]
-   MAIL_TO = info@avenix.nl
-   MAIL_FROM = Avenix <no-reply@avenix.nl>
+Cloudflare Dashboard → Settings → Environment Variables
 
-4. Deploy to Production + Preview
+MAIL_TO = info@avenix.nl  (standaard al ingesteld in code)
 ```
-
-**Email configuratie:**
-- **From:** `Avenix <no-reply@avenix.nl>`
-- **To:** `info@avenix.nl`
-- **Reply-to:** Email van gebruiker (voor directe replies)
 
 ### 3️⃣ Environment Variables Overzicht
 
@@ -264,12 +228,7 @@ Voor een complete werkende setup heb je deze variabelen nodig:
 | Variable | Required | Description | Jouw waarde |
 |----------|----------|-------------|-------------|
 | `TURNSTILE_SECRET_KEY` | ✅ Ja | Cloudflare Turnstile secret | `0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo` |
-| `SMTP_HOST` | ✅ Ja | SMTP server hostname | `smtp.gmail.com` (of jouw provider) |
-| `SMTP_PORT` | ✅ Ja | SMTP server poort | `587` |
-| `SMTP_USERNAME` | ✅ Ja | SMTP authenticatie username | `info@avenix.nl` |
-| `SMTP_PASSWORD` | ✅ Ja | SMTP authenticatie password | `[verkrijg van SMTP provider]` |
-| `MAIL_TO` | ✅ Ja | Ontvanger van formulieren | `info@avenix.nl` |
-| `MAIL_FROM` | ✅ Ja | Afzender naam en email | `Avenix <no-reply@avenix.nl>` |
+| `MAIL_TO` | ⚪ Optioneel | Ontvanger van formulieren | `info@avenix.nl` (default in code) |
 
 **Waar te configureren:**
 ```
@@ -339,12 +298,11 @@ curl -X POST https://avenix.nl/api/contact \
 - ✅ Check of domein toegevoegd is in Turnstile settings
 
 **Email niet ontvangen:**
-- ✅ Check alle SMTP variabelen in Environment Variables (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`)
-- ✅ Test SMTP credentials in email client (Outlook/Thunderbird)
-- ✅ Check firewall/port 587 toegankelijk
-- ✅ Voor Gmail: gebruik app-specifiek wachtwoord (niet normaal wachtwoord)
-- ✅ Check spam folder
-- ✅ Check Cloudflare Functions logs voor SMTP errors
+- ✅ Check spam/junk folder bij info@avenix.nl
+- ✅ Check `MAIL_TO` environment variable (default: info@avenix.nl)
+- ✅ Check Cloudflare Functions logs voor MailChannels errors
+- ✅ Test formulier opnieuw na 5 minuten (eerste email kan vertraagd zijn)
+- ✅ Voeg DKIM DNS record toe voor betere deliverability
 
 **"Invalid input" error:**
 - ✅ Alle verplichte velden ingevuld? (name, email, message)
@@ -486,13 +444,12 @@ git push
 
 **Email niet ontvangen:**
 ```
-1. Check alle SMTP Environment Variables (SMTP_HOST, SMTP_PORT, etc.)
-2. Test SMTP credentials handmatig in email client
-3. Check Cloudflare Functions logs voor SMTP errors
-4. Voor Gmail: gebruik App Password, niet normaal wachtwoord
-5. Test met: curl -X POST https://avenix.nl/api/contact [see above]
-6. Check spam folder
-7. Verify poort 587 niet geblokkeerd door firewall
+1. Check spam/junk folder bij info@avenix.nl
+2. Check Cloudflare Functions logs voor MailChannels errors
+3. Verify MAIL_TO environment variable (optioneel, default: info@avenix.nl)
+4. Test met: curl -X POST https://avenix.nl/api/contact [see above]
+5. Wacht 5-10 minuten (eerste email kan vertraagd zijn)
+6. Voeg DKIM DNS record toe voor betere deliverability
 ```
 
 **Form error in browser:**
@@ -528,14 +485,12 @@ git push
 - **Cloudflare Pages:** https://developers.cloudflare.com/pages/
 - **Cloudflare Workers:** https://developers.cloudflare.com/workers/
 - **Cloudflare Turnstile:** https://developers.cloudflare.com/turnstile/
-- **Nodemailer:** https://nodemailer.com/about/
-- **Gmail SMTP:** https://support.google.com/mail/answer/7126229
-- **SendGrid SMTP:** https://docs.sendgrid.com/for-developers/sending-email/integrating-with-the-smtp-api
+- **MailChannels:** https://mailchannels.com
+- **MailChannels DKIM Setup:** https://mailchannels.zendesk.com/hc/en-us/articles/7122849237389
 
 ### Community:
 - **Cloudflare Discord:** https://discord.gg/cloudflaredev
-- **Nodemailer GitHub:** https://github.com/nodemailer/nodemailer
-- **Stack Overflow:** https://stackoverflow.com/questions/tagged/nodemailer
+- **MailChannels Support:** https://mailchannels.zendesk.com/hc/en-us
 
 ---
 
