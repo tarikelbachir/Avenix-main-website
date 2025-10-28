@@ -229,6 +229,7 @@ Voor een complete werkende setup heb je deze variabelen nodig:
 |----------|----------|-------------|-------------|
 | `TURNSTILE_SECRET_KEY` | ✅ Ja | Cloudflare Turnstile secret | `0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo` |
 | `MAIL_TO` | ⚪ Optioneel | Ontvanger van formulieren | `info@avenix.nl` (default in code) |
+| `MAIL_FROM` | ⚪ Optioneel | Afzender naam + email | `Avenix <no-reply@avenix.nl>` (default) |
 
 **Waar te configureren:**
 ```
@@ -238,6 +239,11 @@ Cloudflare Dashboard
 → Settings
 → Environment Variables
 → Production (en Preview)
+
+Voeg toe:
+MAIL_TO = info@avenix.nl
+MAIL_FROM = Avenix <no-reply@avenix.nl>
+TURNSTILE_SECRET_KEY = 0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo
 ```
 
 ### 4️⃣ Testen
@@ -290,12 +296,68 @@ curl -X POST https://avenix.nl/api/contact \
 # Verwacht: {"ok":true} maar geen email verzonden
 ```
 
-### 5️⃣ Troubleshooting
+### 5️⃣ Test Script
+
+We hebben een test script toegevoegd om het contactformulier te testen:
+
+**Run tests (Linux/Mac):**
+```bash
+chmod +x scripts/test-contact.sh
+./scripts/test-contact.sh
+```
+
+**Run tests (Windows Git Bash):**
+```bash
+bash scripts/test-contact.sh
+```
+
+Het script test:
+- ✅ Turnstile verificatie (verwacht: Captcha failed bij fake token)
+- ✅ Validatie van verplichte velden
+- ✅ Honeypot spam protection (bot detectie)
+- ✅ Email format validatie
+
+### 6️⃣ Cloudflare Setup Instructies
+
+**SSL/TLS Configuratie:**
+```
+1. Cloudflare Dashboard → SSL/TLS
+2. Selecteer: Full (strict)
+3. Enable: Always Use HTTPS
+4. Enable: Automatic HTTPS Rewrites
+```
+
+**Page Rules voor Root Redirect:**
+```
+1. Cloudflare Dashboard → Rules → Page Rules
+2. Create Page Rule
+3. URL: http://avenix.nl/*
+4. Setting: Forwarding URL
+5. Status Code: 301 (Permanent Redirect)
+6. Destination URL: https://www.avenix.nl/$1
+7. Save and Deploy (zet bovenaan!)
+```
+
+**Functions Logs Bekijken:**
+```
+Cloudflare Dashboard
+→ Workers & Pages
+→ [jouw-site]
+→ Functions
+→ Logs (Real-time logging)
+
+Hier zie je:
+- Turnstile verificatie resultaten
+- MailChannels API responses
+- Server errors en debug info
+```
+
+### 7️⃣ Troubleshooting
 
 **Turnstile error: "Beveiligingsverificatie mislukt"**
 - ✅ Check of `TURNSTILE_SECRET_KEY` correct is in Environment Variables
 - ✅ Check of sitekey in HTML overeenkomt met Cloudflare Dashboard
-- ✅ Check of domein toegevoegd is in Turnstile settings
+- ✅ Check of domein toegevoegd is in Turnstile settings (www.avenix.nl)
 
 **Email niet ontvangen:**
 - ✅ Check spam/junk folder bij info@avenix.nl
@@ -317,6 +379,22 @@ Cloudflare Dashboard
 → Functions
 → Logs (Real-time logging)
 ```
+
+### 8️⃣ SPF Record Note
+
+Je huidige SPF record bevat waarschijnlijk `include:_spf.google.com` voor Google Workspace. Dit is prima en kan blijven staan.
+
+**Optioneel:** Als je `include:spf.resend.com` ziet in je SPF record en je gebruikt Resend niet meer, kun je die verwijderen:
+
+```
+Huidige SPF (voorbeeld):
+v=spf1 include:_spf.google.com include:spf.resend.com ~all
+
+Nieuwe SPF (als Resend niet gebruikt wordt):
+v=spf1 include:_spf.google.com ~all
+```
+
+⚠️ **Let op:** Wijzig SPF records alleen als je zeker weet dat Resend niet meer gebruikt wordt. MailChannels heeft geen SPF include nodig (werkt via API).
 
 ---
 

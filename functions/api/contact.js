@@ -1,244 +1,113 @@
-/**
- * Cloudflare Pages Function - Contact Form Handler
- * 
- * POST /api/contact
- * 
- * Features:
- * - Cloudflare Turnstile verification
- * - Honeypot spam protection
- * - Email via MailChannels (Free SMTP for Cloudflare)
- * - Input validation
- */
+// Cloudflare Pages Function: /functions/api/contact.js
+// Turnstile + MailChannels (HTTP API) — Workers friendly
 
 export const onRequestPost = async ({ request, env }) => {
   try {
-    const data = await request.json();
+    const data = await request.json().catch(() => null);
+    if (!data) return json({ error: "Invalid JSON" }, 400);
+
     const {
       name = "",
       email = "",
       message = "",
-      phone = "",
-      company = "",
-      _subject = "",
-      website = "", // honeypot (alternative name)
+      company = "", // honeypot
       ["cf-turnstile-response"]: token
-    } = data || {};
+    } = data;
 
-    // Honeypot check - if filled, silently accept (bot trap)
-    if (website || (company && company.length > 0 && !phone)) {
-      return json({ ok: true }, 200);
-    }
+    // 1) Honeypot
+    if (company) return json({ ok: true }, 200);
 
-    // Basic validation
-    if (!name || !email || !message || !token) {
-      return json({ error: "Alle verplichte velden moeten ingevuld zijn" }, 400);
-    }
-
-    // Length checks
-    if (name.length > 120) {
-      return json({ error: "Naam is te lang (max 120 tekens)" }, 400);
-    }
-    if (email.length > 254) {
-      return json({ error: "E-mailadres is te lang" }, 400);
-    }
-    if (message.length > 5000) {
-      return json({ error: "Bericht is te lang (max 5000 tekens)" }, 400);
-    }
-
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    // 2) Validatie
+    if (!name || !email || !message || !token)
+      return json({ error: "Ontbrekende velden" }, 400);
+    if (name.length > 120 || email.length > 254 || message.length > 5000)
+      return json({ error: "Invoer te lang" }, 400);
+    if (!/^\S+@\S+\.\S+$/.test(email))
       return json({ error: "Ongeldig e-mailadres" }, 400);
-    }
 
-    // Cloudflare Turnstile verification
+    // 3) Turnstile verificatie
     const ip = request.headers.get("CF-Connecting-IP") || "";
-    const turnstileForm = new URLSearchParams();
-    turnstileForm.append("secret", env.TURNSTILE_SECRET_KEY);
-    turnstileForm.append("response", token);
-    turnstileForm.append("remoteip", ip);
+    const form = new URLSearchParams();
+    form.append("secret", env.TURNSTILE_SECRET_KEY);
+    form.append("response", token);
+    form.append("remoteip", ip);
 
-    const turnstileResp = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+    const tsResp = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST",
-      body: turnstileForm
+      body: form
+    });
+    const ts = await tsResp.json();
+    if (!ts.success) return json({ error: "Captcha failed" }, 400);
+
+    // 4) Mail via MailChannels
+    const fromEmail = parseFrom(env.MAIL_FROM) || ("no-reply@" + getDomainFromTo(env.MAIL_TO));
+    const mcResp = await fetch("https://api.mailchannels.net/tx/v1/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: env.MAIL_TO || "info@avenix.nl" }] }],
+        from: { email: fromEmail, name: parseName(env.MAIL_FROM) || "Avenix" },
+        reply_to: { email, name },
+        subject: `Nieuw contactformulier: ${name}`,
+        content: [{ type: "text/html", value: renderHtml({ name, email, message }) }]
+      })
     });
 
-    const turnstileResult = await turnstileResp.json();
-    
-    if (!turnstileResult.success) {
-      console.error("Turnstile verification failed:", turnstileResult);
-      return json({ error: "Beveiligingsverificatie mislukt. Probeer opnieuw." }, 400);
+    if (!mcResp.ok) {
+      const detail = await mcResp.text();
+      return json({ error: "Email send failed (MailChannels)", detail }, 500);
     }
 
-    // Send email via MailChannels (Free for Cloudflare Workers)
-    const emailPayload = {
-      personalizations: [
-        {
-          to: [{ email: env.MAIL_TO || "info@avenix.nl" }],
-          dkim_domain: "avenix.nl",
-          dkim_selector: "mailchannels"
-        }
-      ],
-      from: {
-        email: "no-reply@avenix.nl",
-        name: "Avenix Website"
-      },
-      reply_to: {
-        email: email,
-        name: name
-      },
-      subject: _subject || `Nieuw contactformulier: ${name}`,
-      content: [
-        {
-          type: "text/html",
-          value: renderHtml({ name, email, message, phone, company: company || "Niet opgegeven", subject: _subject })
-        }
-      ]
-    };
-
-    try {
-      const emailResp = await fetch("https://api.mailchannels.net/tx/v1/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(emailPayload)
-      });
-
-      if (!emailResp.ok) {
-        const errorText = await emailResp.text();
-        console.error("MailChannels error:", errorText);
-        return json({ 
-          error: "Er ging iets mis bij het verzenden. Probeer het opnieuw of bel ons op +31 6 8100 1053",
-          detail: errorText
-        }, 500);
-      }
-
-      console.log("Email sent successfully via MailChannels");
-    } catch (emailError) {
-      console.error("Email send error:", emailError);
-      return json({ 
-        error: "Er ging iets mis bij het verzenden. Probeer het opnieuw of bel ons op +31 6 8100 1053",
-        detail: String(emailError)
-      }, 500);
-    }
-
-    return json({ ok: true, message: "Bericht verzonden!" }, 200);
-
+    return json({ ok: true }, 200);
   } catch (e) {
-    console.error("Server error:", e);
-    return json({ 
-      error: "Server fout. Probeer het later opnieuw of bel ons op +31 6 8100 1053",
-      detail: String(e) 
-    }, 500);
+    return json({ error: "Server error", detail: String(e) }, 500);
   }
 };
 
-/**
- * Helper function to return JSON responses
- */
+// Helpers
 function json(obj, status = 200) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { 
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    }
+    headers: { "Content-Type": "application/json" }
   });
 }
 
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(str) {
-  if (!str) return "";
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+function escapeHtml(s) {
+  return String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-/**
- * Render HTML email template
- */
-function renderHtml({ name, email, message, phone, company, subject }) {
+function renderHtml({ name, email, message }) {
   return `
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nieuw contactformulier</title>
-</head>
-<body style="font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  
-  <div style="background: linear-gradient(135deg, #0B0F19 0%, #1A202E 100%); color: white; padding: 30px; border-radius: 10px 10px 0 0;">
-    <h1 style="margin: 0; font-size: 24px; font-weight: bold;">📧 Nieuw contactformulier</h1>
-    <p style="margin: 10px 0 0 0; opacity: 0.9;">Via avenix.nl</p>
-  </div>
-
-  <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
-    
-    ${subject ? `
-    <div style="background: #FACC15; color: #0B0F19; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-      <strong style="font-size: 16px;">📋 ${escapeHtml(subject)}</strong>
+    <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto;line-height:1.6">
+      <h2>Nieuw bericht via <strong>avenix.nl</strong></h2>
+      <p><strong>Naam:</strong> ${escapeHtml(name)}</p>
+      <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
+      <p><strong>Bericht:</strong></p>
+      <p>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
+      <hr/>
+      <p style="font-size:12px;color:#666">Automatisch verzonden via Cloudflare Pages Function.</p>
     </div>
-    ` : ''}
-
-    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <p style="margin: 0 0 5px 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Naam</p>
-      <p style="margin: 0; font-size: 16px; font-weight: 600; color: #111827;">${escapeHtml(name)}</p>
-    </div>
-
-    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <p style="margin: 0 0 5px 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">E-mail</p>
-      <p style="margin: 0; font-size: 16px; font-weight: 600;">
-        <a href="mailto:${escapeHtml(email)}" style="color: #FACC15; text-decoration: none;">${escapeHtml(email)}</a>
-      </p>
-    </div>
-
-    ${phone ? `
-    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <p style="margin: 0 0 5px 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Telefoon</p>
-      <p style="margin: 0; font-size: 16px; font-weight: 600;">
-        <a href="tel:${escapeHtml(phone)}" style="color: #FACC15; text-decoration: none;">${escapeHtml(phone)}</a>
-      </p>
-    </div>
-    ` : ''}
-
-    ${company && company !== "Niet opgegeven" ? `
-    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <p style="margin: 0 0 5px 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Bedrijf</p>
-      <p style="margin: 0; font-size: 16px; font-weight: 600; color: #111827;">${escapeHtml(company)}</p>
-    </div>
-    ` : ''}
-
-    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Bericht</p>
-      <div style="color: #374151; font-size: 15px; line-height: 1.7;">
-        ${escapeHtml(message).replace(/\n/g, "<br/>")}
-      </div>
-    </div>
-
-    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
-    
-    <div style="text-align: center; color: #6b7280; font-size: 12px;">
-      <p style="margin: 0;">🚀 Automatisch verzonden via Cloudflare Pages Function</p>
-      <p style="margin: 5px 0 0 0;">Avenix Software - ${new Date().toLocaleDateString('nl-NL', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })}</p>
-    </div>
-
-  </div>
-
-</body>
-</html>
-  `.trim();
+  `;
 }
 
+function parseFrom(from) {
+  if (!from) return "";
+  const m = /<([^>]+)>/.exec(from);
+  return m ? m[1] : from;
+}
+
+function parseName(from) {
+  if (!from) return "";
+  const m = /^([^<]+)</.exec(from);
+  return m ? m[1].trim() : "";
+}
+
+function getDomainFromTo(to) {
+  const m = /@(.+)$/.exec(to || "");
+  return m ? m[1] : "example.com";
+}
