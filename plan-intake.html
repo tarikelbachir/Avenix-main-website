@@ -550,6 +550,9 @@
                   placeholder="Vertel ons over uw project of vraag..."></textarea>
               </div>
 
+              <!-- Cloudflare Turnstile -->
+              <div class="cf-turnstile" data-sitekey="0x4AAAAAAB9A8PLrRD7V4m-s" data-theme="dark"></div>
+
               <!-- Submit Button -->
               <button 
                 type="submit" 
@@ -895,9 +898,12 @@ const desktopNav = document.getElementById('desktopNav');
       const formData = new FormData(form);
       
       try {
-        const response = await fetch('api/send-email.php', {
+        const payload = Object.fromEntries(formData.entries());
+        
+        const response = await fetch('/api/intake', {
           method: 'POST',
-          body: formData
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
         
         const data = await response.json();
@@ -905,7 +911,7 @@ const desktopNav = document.getElementById('desktopNav');
         // Show response message
         responseMessage.classList.remove('hidden');
         
-        if (data.success) {
+        if (response.ok && data.ok) {
           responseMessage.className = 'p-4 rounded-lg clip-path-button bg-green-500/20 border border-green-500 text-white';
           responseMessage.innerHTML = `
             <div class="flex items-start gap-3">
@@ -914,13 +920,16 @@ const desktopNav = document.getElementById('desktopNav');
               </svg>
               <div>
                 <strong class="block mb-1">Succesvol verzonden!</strong>
-                <p class="text-sm">${data.message}</p>
+                <p class="text-sm">Bedankt! We nemen binnen 24 uur contact met je op om de intake te plannen.</p>
               </div>
             </div>
           `;
           
-          // Reset form
+          // Reset form and Turnstile
           form.reset();
+          if (window.turnstile) {
+            turnstile.reset();
+          }
           
           // Scroll to message
           responseMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -934,7 +943,7 @@ const desktopNav = document.getElementById('desktopNav');
               </svg>
               <div>
                 <strong class="block mb-1">Er ging iets mis</strong>
-                <p class="text-sm">${data.message}</p>
+                <p class="text-sm">${data.error || 'Probeer het opnieuw of bel ons op +31 6 8100 1053'}</p>
               </div>
             </div>
           `;
@@ -964,6 +973,9 @@ const desktopNav = document.getElementById('desktopNav');
     });
   }
   </script>
+  
+  <!-- Cloudflare Turnstile Script -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 </body>
 </html>
