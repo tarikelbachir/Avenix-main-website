@@ -17,12 +17,12 @@ export async function onRequest(context) {
   // Content Security Policy
   newHeaders.set('Content-Security-Policy', 
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.google.com https://www.gstatic.com; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://challenges.cloudflare.com https://www.google.com https://www.gstatic.com; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "img-src 'self' data: https:; " +
-    "connect-src 'self' https://api.resend.com; " +
-    "frame-src https://www.google.com;"
+    "connect-src 'self' https://api.mailchannels.net https://challenges.cloudflare.com; " +
+    "frame-src https://challenges.cloudflare.com https://www.google.com;"
   );
 
   // HSTS (HTTP Strict Transport Security)

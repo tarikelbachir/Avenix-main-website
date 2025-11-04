@@ -27,7 +27,6 @@ export async function onRequestPost(context) {
     // Honeypot check (spam protection)
     const honeypot = formData.get('website');
     if (honeypot) {
-      console.log('Spam detected via honeypot');
       return new Response(JSON.stringify({ error: 'Spam detected' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -155,7 +154,6 @@ export async function onRequestPost(context) {
     }
 
     const result = await resendResponse.json();
-    console.log('Email sent successfully:', result.id);
 
     return new Response(JSON.stringify({ 
       success: true,

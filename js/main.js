@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initTypewriter();
     initScrollAnimations();
     initMobileMenu();
+    initNewMobileMenu();
     initSmoothScrolling();
 });
 
@@ -84,30 +85,30 @@ function initTypewriter() {
     }
 }
 
-// Scroll animations
+// Scroll animations - Unified voor alle animatie classes
 function initScrollAnimations() {
     const observerOptions = {
         threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
+        rootMargin: '0px 0px -50px 0px'
     };
     
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
+                entry.target.classList.add('revealed');
+                // Stop met observeren na reveal voor betere performance
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
     
-    // Observe sections with animate-on-scroll class
-    const animateElements = document.querySelectorAll('.animate-on-scroll');
-    animateElements.forEach(el => {
-        observer.observe(el);
-    });
+    // Observe alle elementen met scroll animatie classes
+    const animateElements = document.querySelectorAll(
+        '.animate-on-scroll, .scroll-reveal, .scroll-animate, .scroll-animate-left, .scroll-animate-right, .stagger-children, .fade-in'
+    );
     
-    // Observe stagger-children containers
-    const staggerContainers = document.querySelectorAll('.stagger-children');
-    staggerContainers.forEach(el => {
+    animateElements.forEach(el => {
         observer.observe(el);
     });
 }
@@ -168,72 +169,6 @@ function initSmoothScrolling() {
     });
 }
 
-// Contact form handling
-function initContactForm() {
-    const contactForm = document.getElementById('contact-form');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(contactForm);
-            const submitBtn = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            
-            // Show loading state
-            submitBtn.innerHTML = '<div class="loading-spinner"></div> Verzenden...';
-            submitBtn.disabled = true;
-            
-            try {
-                const response = await fetch('api/contact.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showNotification('Bericht succesvol verzonden!', 'success');
-                    contactForm.reset();
-                } else {
-                    showNotification('Er is een fout opgetreden. Probeer het opnieuw.', 'error');
-                }
-            } catch (error) {
-                showNotification('Er is een fout opgetreden. Probeer het opnieuw.', 'error');
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
-        });
-    }
-}
-
-// Notification system
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
-        type === 'success' ? 'bg-green-500 text-white' : 
-        type === 'error' ? 'bg-red-500 text-white' : 
-        'bg-blue-500 text-white'
-    }`;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-        notification.classList.remove('translate-x-full');
-    }, 100);
-    
-    // Remove after 5 seconds
-    setTimeout(() => {
-        notification.classList.add('translate-x-full');
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 300);
-    }, 5000);
-}
-
 // Utility functions
 function debounce(func, wait) {
     let timeout;
@@ -247,27 +182,70 @@ function debounce(func, wait) {
     };
 }
 
-// Performance optimization
-const debouncedScrollHandler = debounce(function() {
-    // Handle scroll events here if needed
-}, 16); // ~60fps
+// Nieuw mobiel menu (moderne versie)
+function initNewMobileMenu() {
+  const toggleBtn = document.getElementById('newMobileMenuBtn');
+  const closeBtn = document.getElementById('closeMobileMenuBtn');
+  const menu = document.getElementById('newMobileMenu');
+  const overlay = document.getElementById('newMobileMenuOverlay');
 
-window.addEventListener('scroll', debouncedScrollHandler);
+  if (!toggleBtn || !menu || !overlay) return;
 
-// Lazy loading for images
-function initLazyLoading() {
-    const images = document.querySelectorAll('img[data-src]');
-    
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy');
-                imageObserver.unobserve(img);
-            }
-        });
+  const isMenuOpen = () => menu.classList.contains('menu-open');
+
+  function openMenu() {
+    if (isMenuOpen()) return;
+    menu.classList.add('menu-open');
+    overlay.classList.add('active');
+    toggleBtn.classList.add('active');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    if (!isMenuOpen()) return;
+    menu.classList.remove('menu-open');
+    overlay.classList.remove('active');
+    toggleBtn.classList.remove('active');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  toggleBtn.setAttribute('aria-controls', 'newMobileMenu');
+  toggleBtn.setAttribute('aria-expanded', 'false');
+
+  toggleBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    (isMenuOpen() ? closeMenu : openMenu)();
+  });
+
+  overlay.addEventListener('click', (event) => {
+    event.preventDefault();
+    closeMenu();
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeMenu();
     });
-    
-    images.forEach(img => imageObserver.observe(img));
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeMenu();
+  });
+
+  // Dropdown functionaliteit voor "Diensten"
+  document.querySelectorAll('.new-dropdown-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const content = this.nextElementSibling;
+      const arrow = this.querySelector('.new-dropdown-arrow');
+      const isOpen = content.classList.contains('open');
+
+      content.classList.toggle('open', !isOpen);
+      arrow.classList.toggle('rotate', !isOpen);
+      this.classList.toggle('open', !isOpen);
+    });
+  });
 }

@@ -1099,237 +1099,151 @@ section .clip-path-button:hover {
     }
 }
 
-/* ===== PREMIUM HAMBURGER MENU ===== */
+/* ============================================
+   MOBIELE MENU
+   ============================================ */
 
-/* Mobile Header Bar */
-.mobile-header-bar {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Mobile header styling */
+.mobile-nav-header {
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
+    transition: all 0.3s ease;
 }
 
-.mobile-header-bar:hover {
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(250, 204, 21, 0.15);
+.mobile-nav-header:hover {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* Mobile Menu Header Bar */
-.mobile-menu-header-bar {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(250, 204, 21, 0.15);
-    animation: slideInFromTop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    animation-fill-mode: both;
-    animation-delay: 0.2s;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+/* Hamburger animatie */
+#newMobileMenuBtn.active .new-menu-line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
 }
 
-/* Premium Close Button in menu */
-.premium-close-btn {
-    background: transparent;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.premium-close-btn:hover {
-    transform: scale(1.05);
-    background: rgba(250, 204, 21, 1);
-    box-shadow: 0 0 20px rgba(250, 204, 21, 0.5);
-}
-
-.premium-close-btn:active {
-    transform: scale(0.95);
-}
-
-/* Hide mobile header bar when menu is open (smooth transition) */
-.menu-open ~ .mobile-header-bar {
+#newMobileMenuBtn.active .new-menu-line:nth-child(2) {
     opacity: 0;
-    transform: translateY(-20px);
-    pointer-events: none;
+    transform: scaleX(0);
 }
 
-/* Premium Hamburger Button */
-.premium-hamburger-btn {
-    cursor: pointer;
+#newMobileMenuBtn.active .new-menu-line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
 }
 
-.premium-hamburger-btn:hover {
-    transform: scale(1.05);
+/* Menu states */
+#newMobileMenu.menu-open {
+    transform: translateY(0) !important;
 }
 
-.premium-hamburger-btn:active {
-    transform: scale(0.95);
+#newMobileMenuOverlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
-/* Inline Hamburger Button (in header bar) - with clip-path */
-.premium-hamburger-btn-inline {
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: transparent;
-}
-
-.premium-hamburger-btn-inline:hover {
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.15);
-}
-
-.premium-hamburger-btn-inline:active {
-    transform: scale(0.95);
-    background: rgba(255, 255, 255, 0.12);
-}
-
-.premium-hamburger-btn-inline.active {
-    background: rgba(250, 204, 21, 0.15);
-    box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
-}
-
-/* Clip-path Background Animation */
-.hamburger-bg {
-    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-.premium-hamburger-btn:hover .hamburger-bg {
-    background: hsl(214, 32%, 22%);
-    box-shadow: 0 0 30px rgba(250, 204, 21, 0.3);
-}
-
-.premium-hamburger-btn.active .hamburger-bg {
-    background: hsl(214, 32%, 15%);
-    transform: scale(0.95);
-}
-
-/* Hamburger Lines */
-.premium-hamburger {
-    width: 24px;
-    height: 18px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+/* Close button altijd klikbaar */
+#closeMobileMenuBtn {
+    pointer-events: auto;
+    z-index: 100;
     position: relative;
 }
 
-.hamburger-premium-line {
-    width: 100%;
-    height: 2.5px;
-    border-radius: 10px;
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    transform-origin: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* Stagger animation for lines */
-.hamburger-premium-line:nth-child(1) {
-    transition-delay: 0.1s;
-}
-
-.hamburger-premium-line:nth-child(2) {
-    transition-delay: 0.15s;
-}
-
-.hamburger-premium-line:nth-child(3) {
-    transition-delay: 0.2s;
-}
-
-/* Active state - Transform to X */
-.premium-hamburger-btn.active .hamburger-premium-line:nth-child(1) {
-    transform: translateY(7.75px) rotate(45deg);
-    transition-delay: 0.2s;
-}
-
-.premium-hamburger-btn.active .hamburger-premium-line:nth-child(2) {
-    opacity: 0;
-    transform: scaleX(0);
-    transition-delay: 0.15s;
-}
-
-.premium-hamburger-btn.active .hamburger-premium-line:nth-child(3) {
-    transform: translateY(-7.75px) rotate(-45deg);
-    transition-delay: 0.1s;
-}
-
-/* Premium Menu Slide Animation */
-#mobileMenuSlider.menu-open {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-/* Premium Navigation Items */
-.premium-nav-item {
+/* Mobile header base state - performance optimized */
+.lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) > .mobile-nav-header {
+    transition: opacity 0.2s ease, transform 0.2s ease;
     will-change: transform, opacity;
-    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.premium-nav-item:hover:not(.premium-dropdown-trigger) {
-    box-shadow: 0 4px 20px rgba(250, 204, 21, 0.2);
-    background: rgba(255, 255, 255, 0.05);
+/* Verberg originele header wanneer menu open is - performance optimized */
+body:has(#newMobileMenu.menu-open) .lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) {
+    visibility: hidden;
+    pointer-events: none;
 }
 
-/* Dropdown Trigger - geen hover effect, alleen open state */
-.premium-dropdown-trigger {
-    background: transparent !important;
+body:has(#newMobileMenu.menu-open) .lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) > .mobile-nav-header {
+    opacity: 0;
+    transform: translateY(-100%);
 }
 
-.premium-dropdown-trigger:hover {
-    box-shadow: none !important;
+/* Dropdown button - wit wanneer gesloten, geel wanneer open */
+.new-dropdown-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    transition: background-color 0.3s ease;
 }
 
-/* Disable animated background gradient bij hover voor dropdown */
-.premium-dropdown-trigger:hover .absolute.inset-0 {
-    transform: translateX(-100%) !important;
+.new-dropdown-btn.open {
+    background: rgba(250, 204, 21, 0.15) !important;
 }
 
-/* Enable animated background alleen wanneer dropdown open is */
-.premium-dropdown-trigger.dropdown-open .absolute.inset-0 {
-    transform: translateX(0) !important;
-}
-
-/* Disable hover effects voor dropdown trigger */
-.premium-dropdown-trigger:hover .rounded-xl {
-    transform: none !important;
+/* Diensten menu item - geel wanneer open, wit wanneer gesloten */
+.new-dropdown-btn .w-10.h-10 {
+    transition: background-color 0.3s ease;
     background: rgba(255, 255, 255, 0.1) !important;
 }
 
-.premium-dropdown-trigger:hover svg {
-    transform: none !important;
-    color: rgba(255, 255, 255, 0.7) !important;
+.new-dropdown-btn .w-10.h-10 svg {
+    transition: color 0.3s ease;
+    color: white !important;
 }
 
-.premium-dropdown-trigger:hover span {
-    transform: none !important;
+.new-dropdown-btn .new-dropdown-arrow {
+    transition: color 0.3s ease;
+    color: rgba(255, 255, 255, 0.4) !important;
 }
 
-/* Pijltje blijft wit bij hover */
-.premium-dropdown-trigger:hover .premium-dropdown-arrow {
-    color: rgba(255, 255, 255, 0.5) !important;
+/* Verwijder gele gloed van gradient overlay wanneer gesloten */
+.new-dropdown-btn:not(.open) .absolute.inset-0 {
+    opacity: 0 !important;
+    pointer-events: none;
 }
 
-/* Enable effects alleen wanneer dropdown open is */
-.premium-dropdown-trigger.dropdown-open .rounded-xl {
-    background: rgba(250, 204, 21, 0.3) !important;
-    transform: scale(1.1) !important;
+/* Verwijder gele hover states wanneer dropdown gesloten is */
+.new-dropdown-btn:not(.open):hover .w-10.h-10 {
+    background: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* Icon geel wanneer open */
-.premium-dropdown-trigger.dropdown-open .rounded-xl svg {
-    color: #FACC15 !important;
+.new-dropdown-btn:not(.open):hover .w-10.h-10 svg {
+    color: white !important;
 }
 
-/* Pijltje geel wanneer open */
-.premium-dropdown-trigger.dropdown-open .premium-dropdown-arrow {
-    color: #FACC15 !important;
+.new-dropdown-btn:not(.open):hover .new-dropdown-arrow {
+    color: rgba(255, 255, 255, 0.6) !important;
 }
 
-.premium-dropdown-trigger.dropdown-open span:not(.premium-dropdown-arrow) {
-    transform: translateX(1px) !important;
+.new-dropdown-btn.open .w-10.h-10 {
+    background: rgba(250, 204, 21, 0.2) !important;
 }
 
-/* Alleen highlight wanneer dropdown open is */
-.premium-dropdown-trigger.dropdown-open {
-    background: rgba(255, 255, 255, 0.05) !important;
-    box-shadow: 0 4px 20px rgba(250, 204, 21, 0.2) !important;
+.new-dropdown-btn.open .w-10.h-10 svg {
+    color: rgb(250, 204, 21) !important;
 }
 
-/* Stagger animation for premium items */
-@keyframes slideInFromTop {
+.new-dropdown-btn.open .new-dropdown-arrow {
+    color: rgb(250, 204, 21) !important;
+}
+
+/* Dropdown pijl animatie */
+.new-dropdown-arrow.rotate {
+    transform: rotate(180deg);
+}
+
+/* Dropdown content animatie */
+.new-dropdown-content.open {
+    max-height: 500px !important;
+    margin-top: 0.75rem;
+}
+
+/* Menu items stagger animatie - smooth cascade effect */
+#newMobileMenu.menu-open .mobile-menu-item {
+    animation: slideInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(1) { animation-delay: 0.2s; }
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(2) { animation-delay: 0.25s; }
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(3) { animation-delay: 0.3s; }
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(4) { animation-delay: 0.35s; }
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes slideInUp {
     from {
         opacity: 0;
-        transform: translateY(-20px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -1337,90 +1251,22 @@ section .clip-path-button:hover {
     }
 }
 
-.premium-nav-item {
-    animation: slideInFromTop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    animation-fill-mode: both;
+/* Custom scrollbar voor menu */
+.mobile-menu-scroll::-webkit-scrollbar {
+    width: 6px;
 }
 
-/* Animation delays voor alle menu items */
-.max-w-md.mx-auto.space-y-2 > *:nth-child(1) { animation-delay: 0.1s; }
-.max-w-md.mx-auto.space-y-2 > *:nth-child(2) { animation-delay: 0.15s; }
-.max-w-md.mx-auto.space-y-2 > *:nth-child(3) { animation-delay: 0.2s; }
-.max-w-md.mx-auto.space-y-2 > *:nth-child(4) { animation-delay: 0.25s; }
-.max-w-md.mx-auto.space-y-2 > *:nth-child(5) { animation-delay: 0.3s; }
-.max-w-md.mx-auto.space-y-2 > *:nth-child(6) { animation-delay: 0.35s; }
-.max-w-md.mx-auto.space-y-2 > *:nth-child(7) { animation-delay: 0.4s; }
-.max-w-md.mx-auto.space-y-2 > *:nth-child(8) { animation-delay: 0.45s; }
-
-/* Dropdown Arrow Animation */
-.premium-dropdown-arrow {
-    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+.mobile-menu-scroll::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.premium-dropdown-trigger {
-    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
+.mobile-menu-scroll::-webkit-scrollbar-thumb {
+    background: rgba(250, 204, 21, 0.3);
+    border-radius: 10px;
 }
 
-.premium-dropdown-trigger.dropdown-open .premium-dropdown-arrow {
-    transform: rotate(180deg);
-}
-
-/* Dropdown Content Animation */
-.premium-dropdown-content {
-    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Premium Nav Item Icon Badges */
-.premium-nav-item .rounded-xl,
-.premium-dropdown-trigger .rounded-xl {
-    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 100%, 6px 100%);
-    border-radius: 0;
-}
-
-/* Premium Dropdown Container */
-.premium-dropdown-container {
-    animation: slideInFromTop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    animation-fill-mode: both;
-}
-
-/* Premium Close Button */
-.premium-close-btn .clip-path-button {
-    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 100%, 8px 100%);
-}
-
-/* Premium Subitem Animation */
-.premium-subitem {
-    position: relative;
-    overflow: hidden;
-    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 100%, 8px 100%);
-}
-
-.premium-subitem::before {
-    content: '';
-    position: absolute;
-    left: -100%;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s ease;
-}
-
-.premium-subitem:hover::before {
-    left: 100%;
-}
-
-
-/* Mobile Menu */
-.mobile-menu-enter {
-    opacity: 0;
-    transform: translateY(-10px);
-}
-
-.mobile-menu-enter-active {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+.mobile-menu-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(250, 204, 21, 0.5);
 }
 
 /* Buttons */
@@ -1584,74 +1430,6 @@ section .clip-path-button:hover {
     animation: blink 1s infinite;
 }
 
-/* Mobile Menu Scrollbar */
-#mobileMenuSlider::-webkit-scrollbar {
-    width: 6px;
-}
-
-#mobileMenuSlider::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-#mobileMenuSlider::-webkit-scrollbar-thumb {
-    background: #E5E7EB;
-    border-radius: 10px;
-}
-
-#mobileMenuSlider::-webkit-scrollbar-thumb:hover {
-    background: #D1D5DB;
-}
-
-/* Mobile Header Bar Responsive */
-@media (max-width: 480px) {
-    .mobile-header-bar,
-    .mobile-menu-header-bar {
-        padding: 0.75rem 1rem;
-    }
-    
-    .mobile-header-bar img,
-    .mobile-menu-header-bar img {
-        height: 4.5rem;
-    }
-    
-    .mobile-header-bar .h-12,
-    .mobile-menu-header-bar .h-12 {
-        height: 2.5rem;
-    }
-    
-    .mobile-header-bar .mx-4,
-    .mobile-menu-header-bar .mx-4 {
-        margin-left: 0.75rem;
-        margin-right: 0.75rem;
-    }
-    
-    .premium-hamburger-btn-inline,
-    .premium-close-btn {
-        width: 2.75rem;
-        height: 2.75rem;
-    }
-    
-    .premium-hamburger {
-        width: 20px;
-        height: 15px;
-    }
-    
-    .hamburger-premium-line {
-        height: 2px;
-    }
-}
-
-@media (max-width: 375px) {
-    .mobile-header-bar,
-    .mobile-menu-header-bar {
-        padding: 0.625rem 0.875rem;
-    }
-    
-    .mobile-header-bar img,
-    .mobile-menu-header-bar img {
-        height: 4rem;
-    }
-}
 
 /* ===== SCROLLBAR STYLING ===== */
 ::-webkit-scrollbar {
@@ -1710,45 +1488,9 @@ section .clip-path-button:hover {
 /* Fix voor glitchy scroll behavior en auto-positioning op mobiel */
 
 @media (max-width: 1023px) {
-    /* Prevent layout shifts tijdens scroll */
+    /* Smooth touch scrolling */
     body {
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: none;
-    }
-    
-    /* Disable transformaties tijdens scroll voor betere performance */
-    * {
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
-        -webkit-perspective: 1000;
-        perspective: 1000;
-    }
-    
-    /* Vereenvoudig animaties op mobiel */
-    .animate-on-scroll,
-    .scroll-reveal,
-    .fade-in {
-        opacity: 1 !important;
-        transform: none !important;
-    }
-    
-    /* Disable hover effects op touch devices */
-    .card-hover:hover,
-    .hover-lift:hover {
-        transform: none;
-    }
-    
-    /* Fix voor navigation fixed positioning */
-    .mobile-header-bar {
-        position: fixed;
-        z-index: 50;
-        -webkit-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-    }
-    
-    /* Voorkom content jump bij scrolling */
-    section {
-        will-change: auto;
     }
     
     /* Reduce motion voor betere performance */
@@ -1766,33 +1508,9 @@ section .clip-path-button:hover {
         overflow-x: hidden;
     }
     
-    /* Fix voor te brede content */
-    * {
-        max-width: 100%;
-    }
-    
-    /* Vereenvoudig clip-path voor betere performance */
-    .clip-path-button {
-        clip-path: none;
-        border-radius: 0.375rem;
-    }
-    
-    /* Disable complexe animaties */
-    .animate-floaty,
-    .animate-float,
-    .animate-pulse-glow {
-        animation: none !important;
-    }
-    
-    /* Verbeter touch targets */
-    button, a {
-        min-height: 44px;
-        min-width: 44px;
-    }
-    
-    /* Fix voor formulieren */
+    /* Fix voor formulieren - voorkom zoom op iOS */
     input, textarea, select {
-        font-size: 16px !important; /* Voorkom zoom op iOS */
+        font-size: 16px !important;
     }
 }
 
@@ -1802,28 +1520,6 @@ section .clip-path-button:hover {
         padding-left: max(0px, env(safe-area-inset-left));
         padding-right: max(0px, env(safe-area-inset-right));
     }
-    
-    .mobile-header-bar {
-        padding-left: max(1rem, env(safe-area-inset-left));
-        padding-right: max(1rem, env(safe-area-inset-right));
-        padding-top: max(1rem, env(safe-area-inset-top));
-    }
 }
 
-/* Performance optimalisatie voor mobiel */
-@media (max-width: 1023px) {
-    /* GPU acceleration voor smooth scrolling */
-    .mobile-header-bar,
-    #mobileMenuSlider {
-        -webkit-transform: translateZ(0);
-        transform: translateZ(0);
-        will-change: transform;
-    }
-    
-    /* Reduce blur effects voor performance */
-    .backdrop-blur-md,
-    .backdrop-blur-sm,
-    .backdrop-blur-2xl {
-        backdrop-filter: blur(8px) !important;
-    }
-}
+/* ===== EINDE VAN ALGEMENE STYLES ===== */
