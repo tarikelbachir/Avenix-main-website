@@ -50,3 +50,6 @@ yarn-error.log*
 *.bak
 *.backup
 backup/
+
+# Duplicate directory (should not be in repo)
+Avenix-main-website/
