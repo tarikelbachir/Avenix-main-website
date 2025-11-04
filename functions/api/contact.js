@@ -40,13 +40,12 @@ export const onRequestPost = async ({ request, env }) => {
     if (!ts.success) return json({ error: "Captcha failed" }, 400);
 
     // 4) Mail via MailChannels
-    const fromEmail = parseFrom(env.MAIL_FROM) || ("no-reply@" + getDomainFromTo(env.MAIL_TO));
     const mcResp = await fetch("https://api.mailchannels.net/tx/v1/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         personalizations: [{ to: [{ email: env.MAIL_TO || "info@avenix.nl" }] }],
-        from: { email: fromEmail, name: parseName(env.MAIL_FROM) || "Avenix" },
+        from: { email: "no-reply@avenix.nl", name: "Avenix Contact" },
         reply_to: { email, name },
         subject: `Nieuw contactformulier: ${name}`,
         content: [{ type: "text/html", value: renderHtml({ name, email, message }) }]
@@ -95,19 +94,3 @@ function renderHtml({ name, email, message }) {
   `;
 }
 
-function parseFrom(from) {
-  if (!from) return "";
-  const m = /<([^>]+)>/.exec(from);
-  return m ? m[1] : from;
-}
-
-function parseName(from) {
-  if (!from) return "";
-  const m = /^([^<]+)</.exec(from);
-  return m ? m[1].trim() : "";
-}
-
-function getDomainFromTo(to) {
-  const m = /@(.+)$/.exec(to || "");
-  return m ? m[1] : "example.com";
-}

@@ -1,26 +1,35 @@
 // Cloudflare Pages Function: /functions/api/intake.js
-// Intake form submission handler (FormData support)
+// Intake form handler - Turnstile + MailChannels
 
 export const onRequestPost = async ({ request, env }) => {
   try {
-    // Parse FormData
-    const formData = await request.formData();
-    const name = formData.get('name') || '';
-    const email = formData.get('email') || '';
-    const phone = formData.get('phone') || 'Niet opgegeven';
-    const company = formData.get('company') || 'Niet opgegeven';
-    const subject = formData.get('subject') || '';
-    const message = formData.get('message') || '';
-    const website = formData.get('website'); // honeypot
-    
-    // Honeypot check
+    // Parse JSON data
+    const data = await request.json().catch(() => null);
+    if (!data) return json({ success: false, message: "Ongeldig JSON formaat" }, 400);
+
+    const {
+      name = "",
+      email = "",
+      phone = "",
+      company = "",
+      subject = "",
+      message = "",
+      website = "", // honeypot
+      ["cf-turnstile-response"]: token
+    } = data;
+
+    // 1) Honeypot check
     if (website) {
       return json({ success: true, message: 'Bericht verzonden' }, 200);
     }
-    
-    // Validation
-    if (!name || !email || !message) {
+
+    // 2) Validatie
+    if (!name || !email || !subject || !message) {
       return json({ success: false, message: 'Alle verplichte velden moeten worden ingevuld' }, 400);
+    }
+    
+    if (!token) {
+      return json({ success: false, message: 'Captcha verificatie vereist' }, 400);
     }
     
     if (name.length > 120 || email.length > 254 || message.length > 5000) {
@@ -30,8 +39,24 @@ export const onRequestPost = async ({ request, env }) => {
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       return json({ success: false, message: 'Ongeldig e-mailadres' }, 400);
     }
-    
-    // Send email via MailChannels
+
+    // 3) Turnstile verificatie
+    const ip = request.headers.get("CF-Connecting-IP") || "";
+    const form = new URLSearchParams();
+    form.append("secret", env.TURNSTILE_SECRET_KEY);
+    form.append("response", token);
+    form.append("remoteip", ip);
+
+    const tsResp = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      body: form
+    });
+    const ts = await tsResp.json();
+    if (!ts.success) {
+      return json({ success: false, message: 'Captcha verificatie mislukt' }, 400);
+    }
+
+    // 4) Send email via MailChannels
     const fromEmail = parseFrom(env.MAIL_FROM) || ("no-reply@" + getDomainFromTo(env.MAIL_TO));
     const mcResp = await fetch("https://api.mailchannels.net/tx/v1/send", {
       method: "POST",
@@ -84,6 +109,9 @@ function escapeHtml(s) {
 }
 
 function renderHtml({ name, email, phone, company, subject, message }) {
+  const phoneDisplay = phone || 'Niet opgegeven';
+  const companyDisplay = company || 'Niet opgegeven';
+  
   return `
     <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;">
       <div style="background:linear-gradient(135deg, #0c1221 0%, #1f2937 100%);padding:30px;border-radius:10px 10px 0 0;">
@@ -102,11 +130,11 @@ function renderHtml({ name, email, phone, company, subject, message }) {
           </tr>
           <tr>
             <td style="padding:12px;background:#f9fafb;font-weight:bold;border-bottom:1px solid #e5e7eb;">Telefoon:</td>
-            <td style="padding:12px;border-bottom:1px solid #e5e7eb;"><a href="tel:${escapeHtml(phone)}" style="color:#FFCC03;text-decoration:none;">${escapeHtml(phone)}</a></td>
+            <td style="padding:12px;border-bottom:1px solid #e5e7eb;">${phone ? '<a href="tel:' + escapeHtml(phone) + '" style="color:#FFCC03;text-decoration:none;">' + escapeHtml(phone) + '</a>' : escapeHtml(phoneDisplay)}</td>
           </tr>
           <tr>
             <td style="padding:12px;background:#f9fafb;font-weight:bold;border-bottom:1px solid #e5e7eb;">Bedrijf:</td>
-            <td style="padding:12px;border-bottom:1px solid #e5e7eb;">${escapeHtml(company)}</td>
+            <td style="padding:12px;border-bottom:1px solid #e5e7eb;">${escapeHtml(companyDisplay)}</td>
           </tr>
           ${subject ? `
           <tr>
@@ -147,4 +175,3 @@ function getDomainFromTo(to) {
   const m = /@(.+)$/.exec(to || "");
   return m ? m[1] : "example.com";
 }
-

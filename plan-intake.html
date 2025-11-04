@@ -475,6 +475,9 @@
                 <span id="message-error" class="hidden text-red-400 text-xs mt-1" role="alert"></span>
               </div>
 
+              <!-- Cloudflare Turnstile -->
+              <div class="cf-turnstile" data-sitekey="0x4AAAAAAB9A8PLrRD7V4m-s" data-theme="dark"></div>
+
               <!-- Submit Button -->
               <button 
                 type="submit" 
@@ -922,9 +925,12 @@ if (desktopNav) {
       const formData = new FormData(form);
       
       try {
+        const payload = Object.fromEntries(formData.entries());
+        
         const response = await fetch('/api/intake', {
           method: 'POST',
-          body: formData
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
         
         if (!response.ok) {
@@ -936,7 +942,7 @@ if (desktopNav) {
         // Show response message
         responseMessage.classList.remove('hidden');
         
-        if (data.success) {
+        if (data.success || (response.ok && data.ok)) {
           responseMessage.className = 'p-4 rounded-lg [clip-path:polygon(0_0,calc(100%-12px)_0,100%_100%,12px_100%)] bg-green-500/20 border border-green-500 text-white';
           responseMessage.setAttribute('role', 'alert');
           responseMessage.setAttribute('aria-live', 'polite');
@@ -949,18 +955,17 @@ if (desktopNav) {
             </svg>
             <div>
               <strong class="block mb-1">Succesvol verzonden!</strong>
-              <p class="text-sm"></p>
+              <p class="text-sm">${data.message || 'Bedankt! We nemen binnen 24 uur contact met je op om de intake te plannen.'}</p>
             </div>
           `;
-          const messageP = successDiv.querySelector('p');
-          if (messageP && data.message) {
-            messageP.textContent = data.message;
-          }
           responseMessage.textContent = '';
           responseMessage.appendChild(successDiv);
           
-          // Reset form
+          // Reset form and Turnstile
           form.reset();
+          if (window.turnstile) {
+            turnstile.reset();
+          }
           
           // Clear all errors
           fields.forEach(fieldId => {
@@ -983,13 +988,9 @@ if (desktopNav) {
             </svg>
             <div>
               <strong class="block mb-1">Er ging iets mis</strong>
-              <p class="text-sm"></p>
+              <p class="text-sm">${data.error || data.message || 'Probeer het opnieuw of bel ons op +31 6 8100 1053'}</p>
             </div>
           `;
-          const messageP = errorDiv.querySelector('p');
-          if (messageP && data.message) {
-            messageP.textContent = data.message;
-          }
           responseMessage.textContent = '';
           responseMessage.appendChild(errorDiv);
         }
@@ -1026,6 +1027,9 @@ if (desktopNav) {
     });
   }
   </script>
+  
+  <!-- Cloudflare Turnstile Script -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
   <!-- Main JavaScript -->
   <script src="js/main.js"></script>
