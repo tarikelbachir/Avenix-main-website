@@ -921,12 +921,79 @@ if (desktopNav) {
       if (loadingText) loadingText.classList.remove('hidden');
       responseMessage.classList.add('hidden');
       
+      // Check of Turnstile is geladen
+      if (!window.turnstile) {
+        responseMessage.classList.remove('hidden');
+        responseMessage.className = 'p-4 rounded-lg [clip-path:polygon(0_0,calc(100%-12px)_0,100%_100%,12px_100%)] bg-yellow-500/20 border border-yellow-500 text-white';
+        responseMessage.setAttribute('role', 'alert');
+        responseMessage.setAttribute('aria-live', 'assertive');
+        
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'flex items-start gap-3';
+        warningDiv.innerHTML = `
+          <svg class="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+          <div>
+            <strong class="block mb-1">Beveiliging wordt geladen</strong>
+            <p class="text-sm">Wacht even en probeer het opnieuw.</p>
+          </div>
+        `;
+        responseMessage.textContent = '';
+        responseMessage.appendChild(warningDiv);
+        
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.setAttribute('aria-busy', 'false');
+          const submitText = submitBtn.querySelector('.submit-text');
+          const loadingText = submitBtn.querySelector('.loading-text');
+          if (submitText) submitText.classList.remove('hidden');
+          if (loadingText) loadingText.classList.add('hidden');
+        }
+        return;
+      }
+      
       // Get form data
       const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      
+      // Haal Turnstile token expliciet op
+      const turnstileToken = form.querySelector('input[name="cf-turnstile-response"]')?.value;
+      if (turnstileToken) {
+        payload['cf-turnstile-response'] = turnstileToken;
+      } else {
+        // Check of de widget nog niet is voltooid
+        responseMessage.classList.remove('hidden');
+        responseMessage.className = 'p-4 rounded-lg [clip-path:polygon(0_0,calc(100%-12px)_0,100%_100%,12px_100%)] bg-yellow-500/20 border border-yellow-500 text-white';
+        responseMessage.setAttribute('role', 'alert');
+        responseMessage.setAttribute('aria-live', 'assertive');
+        
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'flex items-start gap-3';
+        warningDiv.innerHTML = `
+          <svg class="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+          <div>
+            <strong class="block mb-1">Verificatie vereist</strong>
+            <p class="text-sm">Voltooi de beveiligingsverificatie alstublieft.</p>
+          </div>
+        `;
+        responseMessage.textContent = '';
+        responseMessage.appendChild(warningDiv);
+        
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.setAttribute('aria-busy', 'false');
+          const submitText = submitBtn.querySelector('.submit-text');
+          const loadingText = submitBtn.querySelector('.loading-text');
+          if (submitText) submitText.classList.remove('hidden');
+          if (loadingText) loadingText.classList.add('hidden');
+        }
+        return;
+      }
       
       try {
-        const payload = Object.fromEntries(formData.entries());
-        
         const response = await fetch('/api/intake', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
