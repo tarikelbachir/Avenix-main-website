@@ -2,10 +2,23 @@
 // Intake form handler - Turnstile + MailChannels
 
 export const onRequestPost = async ({ request, env }) => {
+  const startTime = Date.now();
+  console.log('[INTAKE] Request received', {
+    timestamp: new Date().toISOString(),
+    hasEnv: {
+      MAIL_TO: !!env.MAIL_TO,
+      MAIL_FROM: !!env.MAIL_FROM,
+      TURNSTILE_SECRET_KEY: !!env.TURNSTILE_SECRET_KEY
+    }
+  });
+
   try {
     // Parse JSON data
     const data = await request.json().catch(() => null);
-    if (!data) return json({ success: false, message: "Ongeldig JSON formaat" }, 400);
+    if (!data) {
+      console.error('[INTAKE] Invalid JSON received');
+      return json({ success: false, message: "Ongeldig JSON formaat" }, 400);
+    }
 
     const {
       name = "",
@@ -20,23 +33,28 @@ export const onRequestPost = async ({ request, env }) => {
 
     // 1) Honeypot check
     if (website) {
+      console.log('[INTAKE] Honeypot triggered', { website, email });
       return json({ success: true, message: 'Bericht verzonden' }, 200);
     }
 
     // 2) Validatie
     if (!name || !email || !subject || !message) {
+      console.warn('[INTAKE] Missing required fields', { hasName: !!name, hasEmail: !!email, hasSubject: !!subject, hasMessage: !!message });
       return json({ success: false, message: 'Alle verplichte velden moeten worden ingevuld' }, 400);
     }
     
     if (!token) {
+      console.warn('[INTAKE] Missing Turnstile token');
       return json({ success: false, message: 'Captcha verificatie vereist' }, 400);
     }
     
     if (name.length > 120 || email.length > 254 || message.length > 5000) {
+      console.warn('[INTAKE] Input too long', { nameLen: name.length, emailLen: email.length, messageLen: message.length });
       return json({ success: false, message: 'Invoer te lang' }, 400);
     }
     
     if (!/^\S+@\S+\.\S+$/.test(email)) {
+      console.warn('[INTAKE] Invalid email format', { email });
       return json({ success: false, message: 'Ongeldig e-mailadres' }, 400);
     }
 
@@ -52,28 +70,63 @@ export const onRequestPost = async ({ request, env }) => {
       body: form
     });
     const ts = await tsResp.json();
+    console.log('[INTAKE] Turnstile verified', { success: ts.success, errors: ts['error-codes'] || [] });
+    
     if (!ts.success) {
+      console.error('[INTAKE] Turnstile verification failed', { errors: ts['error-codes'] || [] });
       return json({ success: false, message: 'Captcha verificatie mislukt' }, 400);
     }
 
     // 4) Send email via MailChannels
-    const fromEmail = parseFrom(env.MAIL_FROM) || ("no-reply@" + getDomainFromTo(env.MAIL_TO));
+    const mailTo = env.MAIL_TO || "info@avenix.nl";
+    const fromEmail = parseFrom(env.MAIL_FROM) || ("no-reply@" + getDomainFromTo(mailTo));
+    const emailSubject = `📅 Nieuwe Intake Aanvraag: ${subject || 'Geen onderwerp'}`;
+    
+    console.log('[INTAKE] Sending email via MailChannels', {
+      to: mailTo,
+      from: fromEmail,
+      subject: emailSubject,
+      replyTo: email
+    });
+
     const mcResp = await fetch("https://api.mailchannels.net/tx/v1/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        personalizations: [{ to: [{ email: env.MAIL_TO || "info@avenix.nl" }] }],
+        personalizations: [{ to: [{ email: mailTo }] }],
         from: { email: fromEmail, name: parseName(env.MAIL_FROM) || "Avenix" },
         reply_to: { email, name },
-        subject: `📅 Nieuwe Intake Aanvraag: ${subject || 'Geen onderwerp'}`,
+        subject: emailSubject,
         content: [{ type: "text/html", value: renderHtml({ name, email, phone, company, subject, message }) }]
       })
     });
     
     if (!mcResp.ok) {
       const detail = await mcResp.text();
+      let errorDetail = detail;
+      
+      try {
+        const errorJson = JSON.parse(detail);
+        errorDetail = JSON.stringify(errorJson, null, 2);
+      } catch (e) {
+        // Blijf bij text als het geen JSON is
+      }
+      
+      console.error('[INTAKE] MailChannels API error', {
+        status: mcResp.status,
+        statusText: mcResp.statusText,
+        headers: Object.fromEntries(mcResp.headers.entries()),
+        body: errorDetail,
+        responseTime: Date.now() - startTime
+      });
+      
       return json({ success: false, message: 'Er is een fout opgetreden bij het verzenden. Probeer het later opnieuw.' }, 500);
     }
+
+    console.log('[INTAKE] Email sent successfully', {
+      status: mcResp.status,
+      responseTime: Date.now() - startTime
+    });
     
     return json({ 
       success: true, 
@@ -81,6 +134,11 @@ export const onRequestPost = async ({ request, env }) => {
     }, 200);
     
   } catch (e) {
+    console.error('[INTAKE] Server error', {
+      error: String(e),
+      stack: e.stack,
+      responseTime: Date.now() - startTime
+    });
     return json({ 
       success: false, 
       message: 'Er is een fout opgetreden bij het verzenden. Probeer het later opnieuw of neem direct contact op via info@avenix.nl' 

@@ -425,7 +425,7 @@
               </div>
 
               <!-- Cloudflare Turnstile -->
-              <div class="cf-turnstile" data-sitekey="0x4AAAAAAB9A8PLrRD7V4m-s" data-theme="dark"></div>
+              <div class="cf-turnstile" id="turnstile-widget" data-sitekey="0x4AAAAAAB9A8PLrRD7V4m-s" data-theme="dark" data-callback="onTurnstileSuccess"></div>
 
               <!-- Submit Button -->
               <button 
@@ -771,12 +771,59 @@
         const formData = new FormData(form);
         const payload = Object.fromEntries(formData.entries());
         
-        // Haal Turnstile token expliciet op
-        const turnstileToken = form.querySelector('input[name="cf-turnstile-response"]')?.value;
+        // Haal Turnstile token op - probeer meerdere methoden
+        let turnstileToken = null;
+        
+        // Methode 1: Via hidden input (als Turnstile die toevoegt)
+        const hiddenInput = form.querySelector('input[name="cf-turnstile-response"]');
+        if (hiddenInput && hiddenInput.value) {
+          turnstileToken = hiddenInput.value;
+        }
+        
+        // Methode 2: Via Turnstile widget API (betrouwbaarder)
+        if (!turnstileToken && window.turnstile) {
+          const widget = form.querySelector('.cf-turnstile');
+          if (widget) {
+            // Probeer eerst opgeslagen widget ID (via globale variabele)
+            let widgetId = window.turnstileWidgetId || widget.getAttribute('data-widget-id');
+            
+            // Als geen widget ID, probeer alle widgets op de pagina
+            if (!widgetId) {
+              const widgets = document.querySelectorAll('.cf-turnstile');
+              widgets.forEach(w => {
+                const id = w.getAttribute('data-widget-id');
+                if (id) widgetId = id;
+              });
+            }
+            
+            // Probeer token op te halen met widget ID
+            if (widgetId) {
+              turnstileToken = window.turnstile.getResponse(widgetId);
+            }
+            
+            // Als nog steeds geen token, probeer alle widgets met data-widget-id
+            if (!turnstileToken) {
+              const allWidgets = document.querySelectorAll('[data-widget-id]');
+              allWidgets.forEach(w => {
+                const id = w.getAttribute('data-widget-id');
+                if (id) {
+                  const token = window.turnstile.getResponse(id);
+                  if (token) turnstileToken = token;
+                }
+              });
+            }
+          }
+        }
+        
+        // Methode 3: Check of token al in payload zit (via FormData)
+        if (!turnstileToken && payload['cf-turnstile-response']) {
+          turnstileToken = payload['cf-turnstile-response'];
+        }
+        
         if (turnstileToken) {
           payload['cf-turnstile-response'] = turnstileToken;
         } else {
-          // Check of de widget nog niet is voltooid
+          // Geen token gevonden - vraag gebruiker om verificatie te voltooien
           responseMessage.classList.remove('hidden');
           responseMessage.className = 'p-4 rounded-lg clip-path-button bg-yellow-500/20 border border-yellow-500 text-white';
           responseMessage.innerHTML = `
@@ -875,6 +922,42 @@
   <script src="js/main.js"></script>
   
   <!-- Cloudflare Turnstile Script -->
+  <script>
+    // Sla Turnstile widget ID op wanneer widget wordt geladen (globale variabele)
+    window.turnstileWidgetId = null;
+    
+    window.onTurnstileSuccess = function(token) {
+      // Deze callback wordt aangeroepen wanneer Turnstile succesvol is voltooid
+      // De widget ID wordt automatisch opgeslagen via de widget element
+      const widget = document.getElementById('turnstile-widget');
+      if (widget) {
+        window.turnstileWidgetId = widget.getAttribute('data-widget-id');
+      }
+    };
+    
+    // Alternatieve methode: wacht tot Turnstile is geladen
+    window.addEventListener('load', function() {
+      if (window.turnstile) {
+        // Probeer widget ID te vinden na laden
+        const widget = document.getElementById('turnstile-widget');
+        if (widget) {
+          // Check periodiek of widget ID beschikbaar is
+          const checkWidgetId = setInterval(function() {
+            const id = widget.getAttribute('data-widget-id');
+            if (id) {
+              window.turnstileWidgetId = id;
+              clearInterval(checkWidgetId);
+            }
+          }, 100);
+          
+          // Stop na 5 seconden
+          setTimeout(function() {
+            clearInterval(checkWidgetId);
+          }, 5000);
+        }
+      }
+    });
+  </script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </body>
 </html>

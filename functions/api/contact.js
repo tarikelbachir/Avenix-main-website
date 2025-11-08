@@ -2,9 +2,21 @@
 // Turnstile + MailChannels (HTTP API) — Workers friendly
 
 export const onRequestPost = async ({ request, env }) => {
+  const startTime = Date.now();
+  console.log('[CONTACT] Request received', {
+    timestamp: new Date().toISOString(),
+    hasEnv: {
+      MAIL_TO: !!env.MAIL_TO,
+      TURNSTILE_SECRET_KEY: !!env.TURNSTILE_SECRET_KEY
+    }
+  });
+
   try {
     const data = await request.json().catch(() => null);
-    if (!data) return json({ error: "Invalid JSON" }, 400);
+    if (!data) {
+      console.error('[CONTACT] Invalid JSON received');
+      return json({ error: "Invalid JSON" }, 400);
+    }
 
     const {
       name = "",
@@ -15,15 +27,24 @@ export const onRequestPost = async ({ request, env }) => {
     } = data;
 
     // 1) Honeypot
-    if (company) return json({ ok: true }, 200);
+    if (company) {
+      console.log('[CONTACT] Honeypot triggered', { company, email });
+      return json({ ok: true }, 200);
+    }
 
     // 2) Validatie
-    if (!name || !email || !message || !token)
+    if (!name || !email || !message || !token) {
+      console.warn('[CONTACT] Missing fields', { hasName: !!name, hasEmail: !!email, hasMessage: !!message, hasToken: !!token });
       return json({ error: "Ontbrekende velden" }, 400);
-    if (name.length > 120 || email.length > 254 || message.length > 5000)
+    }
+    if (name.length > 120 || email.length > 254 || message.length > 5000) {
+      console.warn('[CONTACT] Input too long', { nameLen: name.length, emailLen: email.length, messageLen: message.length });
       return json({ error: "Invoer te lang" }, 400);
-    if (!/^\S+@\S+\.\S+$/.test(email))
+    }
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      console.warn('[CONTACT] Invalid email format', { email });
       return json({ error: "Ongeldig e-mailadres" }, 400);
+    }
 
     // 3) Turnstile verificatie
     const ip = request.headers.get("CF-Connecting-IP") || "";
@@ -37,28 +58,70 @@ export const onRequestPost = async ({ request, env }) => {
       body: form
     });
     const ts = await tsResp.json();
-    if (!ts.success) return json({ error: "Captcha failed" }, 400);
+    console.log('[CONTACT] Turnstile verified', { success: ts.success, errors: ts['error-codes'] || [] });
+    
+    if (!ts.success) {
+      console.error('[CONTACT] Turnstile verification failed', { errors: ts['error-codes'] || [] });
+      return json({ error: "Captcha failed" }, 400);
+    }
 
     // 4) Mail via MailChannels
+    const mailTo = env.MAIL_TO || "info@avenix.nl";
+    const emailSubject = `Nieuw contactformulier: ${name}`;
+    
+    console.log('[CONTACT] Sending email via MailChannels', {
+      to: mailTo,
+      from: "no-reply@avenix.nl",
+      subject: emailSubject,
+      replyTo: email
+    });
+
     const mcResp = await fetch("https://api.mailchannels.net/tx/v1/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        personalizations: [{ to: [{ email: env.MAIL_TO || "info@avenix.nl" }] }],
+        personalizations: [{ to: [{ email: mailTo }] }],
         from: { email: "no-reply@avenix.nl", name: "Avenix Contact" },
         reply_to: { email, name },
-        subject: `Nieuw contactformulier: ${name}`,
+        subject: emailSubject,
         content: [{ type: "text/html", value: renderHtml({ name, email, message }) }]
       })
     });
 
     if (!mcResp.ok) {
       const detail = await mcResp.text();
-      return json({ error: "Email send failed (MailChannels)", detail }, 500);
+      let errorDetail = detail;
+      
+      try {
+        const errorJson = JSON.parse(detail);
+        errorDetail = JSON.stringify(errorJson, null, 2);
+      } catch (e) {
+        // Blijf bij text als het geen JSON is
+      }
+      
+      console.error('[CONTACT] MailChannels API error', {
+        status: mcResp.status,
+        statusText: mcResp.statusText,
+        headers: Object.fromEntries(mcResp.headers.entries()),
+        body: errorDetail,
+        responseTime: Date.now() - startTime
+      });
+      
+      return json({ error: "Email send failed (MailChannels)", detail: errorDetail, status: mcResp.status }, 500);
     }
+
+    console.log('[CONTACT] Email sent successfully', {
+      status: mcResp.status,
+      responseTime: Date.now() - startTime
+    });
 
     return json({ ok: true }, 200);
   } catch (e) {
+    console.error('[CONTACT] Server error', {
+      error: String(e),
+      stack: e.stack,
+      responseTime: Date.now() - startTime
+    });
     return json({ error: "Server error", detail: String(e) }, 500);
   }
 };
