@@ -25,7 +25,7 @@ export async function onRequestPost(context) {
     const formType = formData.get('form_type') || 'contact';
     
     // Honeypot check (spam protection)
-    const honeypot = formData.get('website');
+    const honeypot = formData.get('_form_verification');
     if (honeypot) {
       return new Response(JSON.stringify({ error: 'Spam detected' }), {
         status: 400,

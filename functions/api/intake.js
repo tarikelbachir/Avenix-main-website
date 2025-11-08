@@ -27,13 +27,13 @@ export const onRequestPost = async ({ request, env }) => {
       company = "",
       subject = "",
       message = "",
-      website = "", // honeypot
+      ["_form_verification"]: honeypot = "", // honeypot
       ["cf-turnstile-response"]: token
     } = data;
 
     // 1) Honeypot check
-    if (website) {
-      console.log('[INTAKE] Honeypot triggered', { website, email });
+    if (honeypot) {
+      console.log('[INTAKE] Honeypot triggered', { honeypot, email });
       return json({ success: true, message: 'Bericht verzonden' }, 200);
     }
 

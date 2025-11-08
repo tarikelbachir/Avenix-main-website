@@ -22,13 +22,14 @@ export const onRequestPost = async ({ request, env }) => {
       name = "",
       email = "",
       message = "",
-      company = "", // honeypot
+      company = "", // legitiem veld
+      ["_form_verification"]: honeypot = "", // honeypot
       ["cf-turnstile-response"]: token
     } = data;
 
-    // 1) Honeypot
-    if (company) {
-      console.log('[CONTACT] Honeypot triggered', { company, email });
+    // 1) Honeypot check
+    if (honeypot) {
+      console.log('[CONTACT] Honeypot triggered', { honeypot, email });
       return json({ ok: true }, 200);
     }
 
