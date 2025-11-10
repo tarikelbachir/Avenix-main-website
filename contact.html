@@ -392,8 +392,6 @@
                   placeholder="Vertel ons over uw project of vraag..."></textarea>
               </div>
 
-              <div class="cf-turnstile" id="turnstile-widget" data-sitekey="0x4AAAAAAB9A8PLrRD7V4m-s" data-theme="dark" data-callback="onTurnstileSuccess"></div>
-
               <button 
                 type="submit" 
                 id="submitBtn"
@@ -675,7 +673,7 @@
     });
 
     // ==========================================
-    // FORM SUBMISSION HANDLER (Cloudflare + Turnstile + Resend)
+    // FORM SUBMISSION HANDLER (Cloudflare + MailChannels)
     // ==========================================
     
     const form = document.getElementById('contactForm');
@@ -692,6 +690,9 @@
         submitBtn.querySelector('.loading-text').classList.remove('hidden');
         responseMessage.classList.add('hidden');
         
+        // TIJDELIJK UITGESCHAKELD - Turnstile verificatie
+        // TODO: Heractiveer na oplossen MailChannels probleem
+        /*
         // Check of Turnstile is geladen
         if (!window.turnstile) {
           responseMessage.classList.remove('hidden');
@@ -712,11 +713,15 @@
           submitBtn.querySelector('.loading-text').classList.add('hidden');
           return;
         }
+        */
         
         // Get form data
         const formData = new FormData(form);
         const payload = Object.fromEntries(formData.entries());
         
+        // TIJDELIJK UITGESCHAKELD - Turnstile token ophalen
+        // TODO: Heractiveer na oplossen MailChannels probleem
+        /*
         // Haal Turnstile token op - probeer meerdere methoden
         let turnstileToken = null;
         
@@ -788,6 +793,7 @@
           submitBtn.querySelector('.loading-text').classList.add('hidden');
           return;
         }
+        */
         
         try {
           const response = await fetch('/api/contact', {
@@ -815,11 +821,15 @@
               </div>
             `;
             
-            // Reset form and Turnstile
+            // Reset form
             form.reset();
+            // TIJDELIJK UITGESCHAKELD - Turnstile reset
+            // TODO: Heractiveer na oplossen MailChannels probleem
+            /*
             if (window.turnstile) {
               turnstile.reset();
             }
+            */
             
             // Scroll to message
             responseMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -870,43 +880,5 @@
   </script>
   
   <script src="js/main.js"></script>
-  
-  <script>
-    // Sla Turnstile widget ID op wanneer widget wordt geladen (globale variabele)
-    window.turnstileWidgetId = null;
-    
-    window.onTurnstileSuccess = function(token) {
-      // Deze callback wordt aangeroepen wanneer Turnstile succesvol is voltooid
-      // De widget ID wordt automatisch opgeslagen via de widget element
-      const widget = document.getElementById('turnstile-widget');
-      if (widget) {
-        window.turnstileWidgetId = widget.getAttribute('data-widget-id');
-      }
-    };
-    
-    // Alternatieve methode: wacht tot Turnstile is geladen
-    window.addEventListener('load', function() {
-      if (window.turnstile) {
-        // Probeer widget ID te vinden na laden
-        const widget = document.getElementById('turnstile-widget');
-        if (widget) {
-          // Check periodiek of widget ID beschikbaar is
-          const checkWidgetId = setInterval(function() {
-            const id = widget.getAttribute('data-widget-id');
-            if (id) {
-              window.turnstileWidgetId = id;
-              clearInterval(checkWidgetId);
-            }
-          }, 100);
-          
-          // Stop na 5 seconden
-          setTimeout(function() {
-            clearInterval(checkWidgetId);
-          }, 5000);
-        }
-      }
-    });
-  </script>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </body>
 </html>

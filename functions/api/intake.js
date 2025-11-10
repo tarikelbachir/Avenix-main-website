@@ -26,9 +26,13 @@ export const onRequestPost = async ({ request, env }) => {
       return json({ success: false, message: 'Alle verplichte velden moeten worden ingevuld' }, 400);
     }
     
+    // TIJDELIJK UITGESCHAKELD - Turnstile verificatie
+    // TODO: Heractiveer na oplossen MailChannels probleem
+    /*
     if (!token) {
       return json({ success: false, message: 'Captcha verificatie vereist' }, 400);
     }
+    */
     
     if (name.length > 120 || email.length > 254 || message.length > 5000) {
       return json({ success: false, message: 'Invoer te lang' }, 400);
@@ -37,6 +41,10 @@ export const onRequestPost = async ({ request, env }) => {
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       return json({ success: false, message: 'Ongeldig e-mailadres' }, 400);
     }
+    
+    // TIJDELIJK UITGESCHAKELD - Turnstile verificatie
+    // TODO: Heractiveer na oplossen MailChannels probleem
+    /*
     const ip = request.headers.get("CF-Connecting-IP") || "";
     const form = new URLSearchParams();
     form.append("secret", env.TURNSTILE_SECRET_KEY);
@@ -52,6 +60,7 @@ export const onRequestPost = async ({ request, env }) => {
     if (!ts.success) {
       return json({ success: false, message: 'Captcha verificatie mislukt' }, 400);
     }
+    */
 
     const mailTo = env.MAIL_TO || "info@avenix.nl";
     const fromEmail = parseFrom(env.MAIL_FROM) || ("no-reply@" + getDomainFromTo(mailTo));
