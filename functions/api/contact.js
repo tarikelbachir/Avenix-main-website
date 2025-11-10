@@ -51,59 +51,51 @@ export const onRequestPost = async ({ request, env }) => {
     */
 
     const mailTo = env.MAIL_TO || "info@avenix.nl";
-    const emailSubject = `Nieuw contactformulier: ${name}`;
+    const emailSubject = `Nieuw contactformulier bericht van ${name}`;
 
+    // Send email via Resend
     const emailPayload = {
-      personalizations: [{ to: [{ email: mailTo }] }],
-      from: { email: "no-reply@avenix.nl", name: "Avenix Contact" },
-      reply_to: { email, name },
+      from: 'Avenix <info@avenix.nl>',
+      to: [mailTo],
+      reply_to: email,
       subject: emailSubject,
-      content: [{ type: "text/html", value: renderHtml({ name, email, message, company }) }]
+      html: renderHtml({ name, email, message, company })
     };
 
-    const mcResp = await fetch("https://api.mailchannels.net/tx/v1/send", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(emailPayload)
-    });
-
-    if (!mcResp.ok) {
-      const detail = await mcResp.text();
-      let errorDetail = detail;
-      let errorMessage = "Email send failed (MailChannels)";
-      
-      try {
-        const errorJson = JSON.parse(detail);
-        errorDetail = JSON.stringify(errorJson, null, 2);
-        
-        if (errorJson.errors && errorJson.errors.length > 0) {
-          const firstError = errorJson.errors[0];
-          if (firstError.message) {
-            errorMessage = firstError.message;
-          }
-        }
-      } catch (e) {
-      }
-      
-      console.error("MailChannels error:", {
-        status: mcResp.status,
-        statusText: mcResp.statusText,
-        detail: errorDetail,
-        from: emailPayload.from.email,
-        to: mailTo
+    try {
+      const resendResp = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(emailPayload)
       });
-      
+
+      if (!resendResp.ok) {
+        const errorText = await resendResp.text();
+        console.error('Resend API error:', {
+          status: resendResp.status,
+          statusText: resendResp.statusText,
+          detail: errorText
+        });
+        return json({ 
+          error: 'E-mail verzenden mislukt',
+          detail: errorText 
+        }, 500);
+      }
+
+      const resendData = await resendResp.json();
+      console.log('Email sent successfully via Resend:', resendData.id);
+
+      return json({ ok: true }, 200);
+    } catch (error) {
+      console.error('Error sending email:', error);
       return json({ 
-        error: errorMessage, 
-        detail: errorDetail, 
-        status: mcResp.status,
-        hint: mcResp.status === 403 ? "DNS verificatie vereist - voeg TXT record toe voor avenix.nl" : undefined
+        error: 'Er ging iets mis bij het verzenden',
+        detail: error.message 
       }, 500);
     }
-
-    return json({ ok: true }, 200);
   } catch (e) {
     return json({ error: "Server error", detail: String(e) }, 500);
   }

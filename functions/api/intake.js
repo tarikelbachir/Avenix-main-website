@@ -63,38 +63,54 @@ export const onRequestPost = async ({ request, env }) => {
     */
 
     const mailTo = env.MAIL_TO || "info@avenix.nl";
-    const fromEmail = parseFrom(env.MAIL_FROM) || ("no-reply@" + getDomainFromTo(mailTo));
-    const emailSubject = `📅 Nieuwe Intake Aanvraag: ${subject || 'Geen onderwerp'}`;
+    const emailSubject = `Nieuwe intake aanvraag van ${name}`;
 
-    const mcResp = await fetch("https://api.mailchannels.net/tx/v1/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: mailTo }] }],
-        from: { email: fromEmail, name: parseName(env.MAIL_FROM) || "Avenix" },
-        reply_to: { email, name },
-        subject: emailSubject,
-        content: [{ type: "text/html", value: renderHtml({ name, email, phone, company, subject, message }) }]
-      })
-    });
-    
-    if (!mcResp.ok) {
-      const detail = await mcResp.text();
-      let errorDetail = detail;
-      
-      try {
-        const errorJson = JSON.parse(detail);
-        errorDetail = JSON.stringify(errorJson, null, 2);
-      } catch (e) {
+    // Send email via Resend
+    const emailPayload = {
+      from: 'Avenix <info@avenix.nl>',
+      to: [mailTo],
+      reply_to: email,
+      subject: emailSubject,
+      html: renderHtml({ name, email, phone, company, subject, message })
+    };
+
+    try {
+      const resendResp = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(emailPayload)
+      });
+
+      if (!resendResp.ok) {
+        const errorText = await resendResp.text();
+        console.error('Resend API error:', {
+          status: resendResp.status,
+          statusText: resendResp.statusText,
+          detail: errorText
+        });
+        return json({ 
+          success: false, 
+          message: 'Er is een fout opgetreden bij het verzenden. Probeer het later opnieuw.' 
+        }, 500);
       }
-      
-      return json({ success: false, message: 'Er is een fout opgetreden bij het verzenden. Probeer het later opnieuw.' }, 500);
+
+      const resendData = await resendResp.json();
+      console.log('Email sent successfully via Resend:', resendData.id);
+
+      return json({ 
+        success: true, 
+        message: 'Bericht succesvol verzonden! We nemen zo snel mogelijk contact met je op.' 
+      }, 200);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      return json({ 
+        success: false, 
+        message: 'Er is een fout opgetreden bij het verzenden. Probeer het later opnieuw of neem direct contact op via info@avenix.nl' 
+      }, 500);
     }
-    
-    return json({ 
-      success: true, 
-      message: 'Bericht succesvol verzonden! We nemen zo snel mogelijk contact met je op.' 
-    }, 200);
     
   } catch (e) {
     return json({ 
