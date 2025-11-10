@@ -62,7 +62,19 @@ export const onRequestPost = async ({ request, env }) => {
     }
     */
 
-    const mailTo = (env.MAIL_TO && env.MAIL_TO.trim() ? env.MAIL_TO.trim() : "info@avenix.nl");
+    // Get and validate mailTo
+    let mailTo = "info@avenix.nl";
+    if (env.MAIL_TO) {
+      const trimmed = env.MAIL_TO.trim();
+      if (trimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+        mailTo = trimmed;
+      } else {
+        console.error('Invalid MAIL_TO environment variable:', env.MAIL_TO);
+      }
+    }
+    
+    console.log('mailTo value:', mailTo, 'type:', typeof mailTo, 'length:', mailTo.length);
+    
     const emailSubject = `Nieuwe intake aanvraag van ${name}`;
 
     // Send email via Resend
@@ -74,14 +86,7 @@ export const onRequestPost = async ({ request, env }) => {
       html: renderHtml({ name, email, phone, company, subject, message })
     };
 
-    // Validate email format
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mailTo)) {
-      console.error('Invalid email format for mailTo:', mailTo);
-      return json({ 
-        success: false,
-        message: 'Ongeldig e-mailadres geconfigureerd'
-      }, 500);
-    }
+    console.log('Resend payload to field:', JSON.stringify(emailPayload.to));
 
     try {
       const resendResp = await fetch('https://api.resend.com/emails', {
