@@ -50,17 +50,32 @@ export const onRequestPost = async ({ request, env }) => {
     }
     */
 
-    const mailTo = env.MAIL_TO || "info@avenix.nl";
+    const mailTo = (env.MAIL_TO && env.MAIL_TO.trim() ? env.MAIL_TO.trim() : "info@avenix.nl");
     const emailSubject = `Nieuw contactformulier bericht van ${name}`;
 
     // Send email via Resend
     const emailPayload = {
       from: 'Avenix <info@avenix.nl>',
       to: [mailTo],
-      reply_to: email,
+      reply_to: email.trim(),
       subject: emailSubject,
       html: renderHtml({ name, email, message, company })
     };
+
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mailTo)) {
+      console.error('Invalid email format for mailTo:', mailTo);
+      return json({ 
+        error: 'Ongeldig e-mailadres geconfigureerd',
+        detail: `Het geconfigureerde e-mailadres "${mailTo}" heeft een ongeldig formaat.`
+      }, 500);
+    }
+
+    console.log('Sending email via Resend:', {
+      to: emailPayload.to,
+      from: emailPayload.from,
+      subject: emailPayload.subject
+    });
 
     try {
       const resendResp = await fetch('https://api.resend.com/emails', {
