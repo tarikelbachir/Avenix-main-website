@@ -67,7 +67,7 @@ export const onRequestPost = async ({ request, env }) => {
 
     // Send email via Resend
     const emailPayload = {
-      from: 'Avenix <info@avenix.nl>',
+      from: `${name} via Avenix <info@avenix.nl>`,
       to: [mailTo],
       reply_to: email.trim(),
       subject: emailSubject,
