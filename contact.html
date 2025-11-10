@@ -826,6 +826,10 @@
             
           } else {
             responseMessage.className = 'p-4 rounded-lg clip-path-button bg-red-500/20 border border-red-500 text-white';
+            let errorText = data.error || 'Probeer het opnieuw of bel ons op +31 6 8100 1053';
+            if (data.hint) {
+              errorText += `<br/><span class="text-xs opacity-75">${data.hint}</span>`;
+            }
             responseMessage.innerHTML = `
               <div class="flex items-start gap-3">
                 <svg class="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -833,7 +837,8 @@
                 </svg>
                 <div>
                   <strong class="block mb-1">Er ging iets mis</strong>
-                  <p class="text-sm">${data.error || 'Probeer het opnieuw of bel ons op +31 6 8100 1053'}</p>
+                  <p class="text-sm">${errorText}</p>
+                  ${data.detail ? `<details class="mt-2 text-xs opacity-75"><summary>Technische details</summary><pre class="mt-1 whitespace-pre-wrap">${data.detail}</pre></details>` : ''}
                 </div>
               </div>
             `;
