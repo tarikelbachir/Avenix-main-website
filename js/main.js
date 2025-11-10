@@ -1,14 +1,10 @@
-// Main JavaScript functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Add js-loaded class to enable animations
     document.documentElement.classList.add('js-loaded');
     
-    // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
     
-    // Initialize all components
     initNavigation();
     initTypewriter();
     initScrollAnimations();
@@ -17,12 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScrolling();
 });
 
-// Navigation scroll effect
 function initNavigation() {
     const navbar = document.getElementById('navbar');
     const desktopNav = document.getElementById('desktopNav');
     
-    window.addEventListener('scroll', function() {
+    const handleScroll = debounce(function() {
         if (navbar && window.scrollY > 20) {
             navbar.classList.add('navbar-scrolled');
         } else if (navbar) {
@@ -36,10 +31,11 @@ function initNavigation() {
                 desktopNav.classList.remove('scrolled');
             }
         }
-    });
+    }, 10);
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
 }
 
-// Typewriter effect
 function initTypewriter() {
     const texts = [
         "Digitale Oplossingen Die Uw Bedrijf Laten Groeien",
@@ -48,44 +44,50 @@ function initTypewriter() {
     ];
     
     const typewriterElement = document.getElementById('typewriter-text');
-    const cursor = document.getElementById('cursor');
+    
+    if (!typewriterElement) return;
     
     let textIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
     let typeSpeed = 100;
+    let lastTime = 0;
+    let animationFrameId = null;
     
-    function type() {
-        const currentText = texts[textIndex];
+    function type(currentTime) {
+        if (!lastTime) lastTime = currentTime;
+        const deltaTime = currentTime - lastTime;
         
-        if (isDeleting) {
-            typewriterElement.textContent = currentText.substring(0, charIndex - 1);
-            charIndex--;
-            typeSpeed = 50;
-        } else {
-            typewriterElement.textContent = currentText.substring(0, charIndex + 1);
-            charIndex++;
-            typeSpeed = 100;
+        if (deltaTime >= typeSpeed) {
+            lastTime = currentTime;
+            const currentText = texts[textIndex];
+            
+            if (isDeleting) {
+                typewriterElement.textContent = currentText.substring(0, charIndex - 1);
+                charIndex--;
+                typeSpeed = 50;
+            } else {
+                typewriterElement.textContent = currentText.substring(0, charIndex + 1);
+                charIndex++;
+                typeSpeed = 100;
+            }
+            
+            if (!isDeleting && charIndex === currentText.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                textIndex = (textIndex + 1) % texts.length;
+                typeSpeed = 500;
+            }
         }
         
-        if (!isDeleting && charIndex === currentText.length) {
-            typeSpeed = 2000;
-            isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-            isDeleting = false;
-            textIndex = (textIndex + 1) % texts.length;
-            typeSpeed = 500;
-        }
-        
-        setTimeout(type, typeSpeed);
+        animationFrameId = requestAnimationFrame(type);
     }
     
-    if (typewriterElement) {
-        type();
-    }
+    animationFrameId = requestAnimationFrame(type);
 }
 
-// Scroll animations - Unified voor alle animatie classes
 function initScrollAnimations() {
     const observerOptions = {
         threshold: 0.1,
@@ -97,13 +99,11 @@ function initScrollAnimations() {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
                 entry.target.classList.add('revealed');
-                // Stop met observeren na reveal voor betere performance
                 observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
     
-    // Observe alle elementen met scroll animatie classes
     const animateElements = document.querySelectorAll(
         '.animate-on-scroll, .scroll-reveal, .scroll-animate, .scroll-animate-left, .scroll-animate-right, .stagger-children, .fade-in'
     );
@@ -113,7 +113,6 @@ function initScrollAnimations() {
     });
 }
 
-// Mobile menu functionality
 function initMobileMenu() {
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -131,11 +130,9 @@ function initMobileMenu() {
                 mobileMenuBtn.innerHTML = '<i data-lucide="x" class="h-6 w-6"></i>';
             }
             
-            // Reinitialize icons after DOM change
             lucide.createIcons();
         });
         
-        // Close mobile menu when clicking on links
         mobileNavLinks.forEach(link => {
             link.addEventListener('click', function() {
                 mobileMenu.classList.add('hidden');
@@ -146,7 +143,6 @@ function initMobileMenu() {
     }
 }
 
-// Smooth scrolling for anchor links
 function initSmoothScrolling() {
     const links = document.querySelectorAll('a[href^="#"]');
     
@@ -158,7 +154,7 @@ function initSmoothScrolling() {
             const targetElement = document.querySelector(targetId);
             
             if (targetElement) {
-                const offsetTop = targetElement.offsetTop - 80; // Account for fixed navbar
+                const offsetTop = targetElement.offsetTop - 80;
                 
                 window.scrollTo({
                     top: offsetTop,
@@ -169,7 +165,6 @@ function initSmoothScrolling() {
     });
 }
 
-// Utility functions
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -182,7 +177,6 @@ function debounce(func, wait) {
     };
 }
 
-// Nieuw mobiel menu (moderne versie)
 function initNewMobileMenu() {
   const toggleBtn = document.getElementById('newMobileMenuBtn');
   const closeBtn = document.getElementById('closeMobileMenuBtn');
@@ -195,57 +189,64 @@ function initNewMobileMenu() {
 
   function openMenu() {
     if (isMenuOpen()) return;
-    menu.classList.add('menu-open');
-    overlay.classList.add('active');
-    toggleBtn.classList.add('active');
-    toggleBtn.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
+    
+    requestAnimationFrame(() => {
+      menu.classList.add('menu-open');
+      overlay.classList.add('active');
+      toggleBtn.classList.add('active');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    });
   }
 
   function closeMenu() {
     if (!isMenuOpen()) return;
-    menu.classList.remove('menu-open');
-    overlay.classList.remove('active');
-    toggleBtn.classList.remove('active');
-    toggleBtn.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    
+    requestAnimationFrame(() => {
+      menu.classList.remove('menu-open');
+      overlay.classList.remove('active');
+      toggleBtn.classList.remove('active');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    });
   }
 
   toggleBtn.setAttribute('aria-controls', 'newMobileMenu');
   toggleBtn.setAttribute('aria-expanded', 'false');
 
-  toggleBtn.addEventListener('click', (event) => {
-    event.preventDefault();
+  toggleBtn.addEventListener('click', () => {
     (isMenuOpen() ? closeMenu : openMenu)();
   });
 
-  overlay.addEventListener('click', (event) => {
-    event.preventDefault();
-    closeMenu();
-  });
+  overlay.addEventListener('click', closeMenu);
 
   if (closeBtn) {
     closeBtn.addEventListener('click', (event) => {
-      event.preventDefault();
       event.stopPropagation();
       closeMenu();
     });
   }
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeMenu();
+    if (event.key === 'Escape' && isMenuOpen()) {
+      closeMenu();
+    }
   });
 
-  // Dropdown functionaliteit voor "Diensten"
   document.querySelectorAll('.new-dropdown-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
       const content = this.nextElementSibling;
       const arrow = this.querySelector('.new-dropdown-arrow');
+      if (!content) return;
+      
       const isOpen = content.classList.contains('open');
 
-      content.classList.toggle('open', !isOpen);
-      arrow.classList.toggle('rotate', !isOpen);
-      this.classList.toggle('open', !isOpen);
+      requestAnimationFrame(() => {
+        content.classList.toggle('open', !isOpen);
+        if (arrow) arrow.classList.toggle('rotate', !isOpen);
+        this.classList.toggle('open', !isOpen);
+      });
     });
   });
 }

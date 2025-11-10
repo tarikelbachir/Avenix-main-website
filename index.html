@@ -10,7 +10,6 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://avenixsoftware.nl" />
     
-    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon.png">
     
@@ -46,7 +45,6 @@
         };
     </script>
     
-    <!-- Geconsolideerde CSS -->
     <link rel="stylesheet" href="css/styles.css">
     <style>
       /* Lichte animaties voor performance */
@@ -100,15 +98,14 @@
     </style>
 </head>
 <body class="font-sans text-foreground bg-navy-dark selection:bg-primary/30 selection:text-ink overflow-x-hidden">
-  <!-- Logo & Navigation - Same Line (Desktop) -->
+  
   <div id="desktopNav" class="fixed top-4 lg:top-8 left-1/2 transform -translate-x-1/2 z-50 hidden lg:block transition-all duration-300 max-w-[98vw] scale-90 xl:scale-100">
     <div class="flex items-center gap-2 lg:gap-3 xl:gap-8">
-      <!-- Logo -->
+      
       <a href="index.html" class="logo-container group overflow-hidden" style="width: clamp(140px, 15vw, 180px); height: clamp(60px, 8vw, 80px);">
         <img src="assets/img/avenix_logo_main.svg" alt="Avenix" class="h-full w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 group-hover:drop-shadow-lg filter brightness-0 invert object-contain" />
       </a>
       
-      <!-- Navigation Links -->
       <nav class="nav-links-wrapper clip-path-button bg-navy-medium/80 backdrop-blur-md px-2 lg:px-4 xl:px-6 py-2 lg:py-2.5 flex items-center gap-2 lg:gap-4 xl:gap-6 text-[0.75rem] lg:text-xs xl:text-sm font-medium whitespace-nowrap">
         <a href="index.html" class="nav-link text-white hover:text-white transition-colors relative">Home</a>
         
@@ -126,9 +123,8 @@
         <a href="contact.html" class="nav-link text-white hover:text-white transition-colors relative">Contact</a>
       </nav>
       
-      <!-- Contact Hub - Side by Side -->
       <div class="contact-hub-sidebyside flex items-center gap-2 lg:gap-3 ml-1 lg:ml-2 xl:ml-4">
-        <!-- Phone Number Badge -->
+        
         <a href="tel:+31681001053" class="phone-badge clip-path-button bg-navy-medium/70 backdrop-blur-sm px-2.5 lg:px-3 xl:px-4 py-2 lg:py-2.5 transition-all duration-300 hover:bg-navy-medium/85 group">
           <div class="flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5 lg:w-4 lg:h-4 text-primary flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +134,6 @@
           </div>
         </a>
       
-      <!-- CTA Button -->
         <a href="plan-intake.html" class="btn-hero-primary clip-path-button text-[0.7rem] lg:text-xs xl:text-sm px-2.5 lg:px-3 xl:px-4 py-2 lg:py-2.5 whitespace-nowrap relative group">
           <span class="relative z-10 flex items-center gap-1.5 cta-text text-navy-dark font-bold transition-all duration-300">
             <svg class="w-3.5 h-3.5 lg:w-4 lg:h-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,7 +151,6 @@
     </div>
   </div>
 
-  <!-- Mobile Header -->
   <div class="lg:hidden fixed top-4 left-4 right-4 z-[100]">
     <div class="mobile-nav-header bg-navy-medium/95 backdrop-blur-md shadow-xl px-6 py-3 flex items-center justify-between">
       <a href="index.html" class="flex-1">
@@ -171,17 +165,14 @@
     </div>
   </div>
 
-  <!-- Mobile Menu Overlay -->
-  <div id="newMobileMenuOverlay" class="lg:hidden fixed inset-0 bg-black/70 backdrop-blur-sm opacity-0 invisible transition-all duration-500 ease-out z-[90]"></div>
+  <div id="newMobileMenuOverlay" class="lg:hidden fixed inset-0 bg-black/70 backdrop-blur-sm opacity-0 invisible z-[90]"></div>
 
-  <!-- Mobile Menu Panel -->
-  <div id="newMobileMenu" class="lg:hidden fixed inset-0 bg-gradient-to-b from-navy-dark via-navy-dark to-navy-medium translate-y-[-100%] transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-[95] overflow-y-auto mobile-menu-scroll">
+  <div id="newMobileMenu" class="lg:hidden fixed inset-0 bg-gradient-to-b from-navy-dark via-navy-dark to-navy-medium translate-y-[-100%] z-[95] overflow-y-auto mobile-menu-scroll">
     <div class="min-h-full flex flex-col">
       
-      <!-- Menu Header Wrapper -->
       <div class="fixed top-4 left-4 right-4 z-[100]">
-        <!-- Menu Header -->
-        <div class="mobile-nav-header bg-navy-medium/95 backdrop-blur-xl px-6 py-5 flex items-center justify-between border-b border-white/5">
+        
+        <div class="mobile-nav-header bg-navy-medium/95 backdrop-blur-sm px-6 py-5 flex items-center justify-between border-b border-white/5">
         <span class="text-white text-xl font-bold tracking-wider">AVENIX</span>
         <button id="closeMobileMenuBtn" type="button" class="w-12 h-12 flex items-center justify-center rounded-sm hover:bg-white/10 transition-all hover:scale-110">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,15 +182,12 @@
         </div>
       </div>
       
-      <!-- Gele accent lijn -->
       <div class="px-6 pt-28 pb-2">
         <div class="h-1 w-20 bg-gradient-to-r from-primary via-primary/80 to-transparent rounded-full"></div>
       </div>
       
-      <!-- Menu Items -->
       <nav class="flex-1 px-6 py-6">
         
-        <!-- Home -->
         <a href="index.html" class="mobile-menu-item clip-path-button flex items-center gap-4 px-5 py-4 text-white font-semibold bg-white/5 hover:bg-white/10 transition-all group relative overflow-hidden mb-3">
           <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="w-10 h-10 bg-white/10 group-hover:bg-primary/20 rounded-lg flex items-center justify-center transition-all group-hover:scale-110 relative z-10 flex-shrink-0">
@@ -213,7 +201,6 @@
           </svg>
         </a>
         
-        <!-- Diensten (met dropdown) -->
         <div class="mb-3">
           <button class="new-dropdown-btn mobile-menu-item clip-path-button w-full flex items-center gap-4 px-5 py-4 text-white font-semibold bg-white/5 hover:bg-white/10 transition-all group relative overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -228,7 +215,6 @@
             </svg>
           </button>
           
-          <!-- Submenu -->
           <div class="new-dropdown-content max-h-0 overflow-hidden transition-all duration-300">
             <div class="bg-navy-dark/60 backdrop-blur-sm rounded-lg p-2 space-y-1.5 ml-14">
               <a href="diensten/website-development.html" class="flex items-center gap-3 px-4 py-2.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all group">
@@ -266,7 +252,6 @@
           </div>
         </div>
         
-        <!-- Over ons -->
         <a href="over-ons.html" class="mobile-menu-item clip-path-button flex items-center gap-4 px-5 py-4 text-white font-semibold bg-white/5 hover:bg-white/10 transition-all group relative overflow-hidden mb-3">
           <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="w-10 h-10 bg-white/10 group-hover:bg-primary/20 rounded-lg flex items-center justify-center transition-all group-hover:scale-110 relative z-10 flex-shrink-0">
@@ -280,7 +265,6 @@
           </svg>
         </a>
         
-        <!-- FAQ -->
         <a href="faq.html" class="mobile-menu-item clip-path-button flex items-center gap-4 px-5 py-4 text-white font-semibold bg-white/5 hover:bg-white/10 transition-all group relative overflow-hidden mb-3">
           <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="w-10 h-10 bg-white/10 group-hover:bg-primary/20 rounded-lg flex items-center justify-center transition-all group-hover:scale-110 relative z-10 flex-shrink-0">
@@ -294,7 +278,6 @@
           </svg>
         </a>
         
-        <!-- Contact -->
         <a href="contact.html" class="mobile-menu-item clip-path-button flex items-center gap-4 px-5 py-4 text-white font-semibold bg-white/5 hover:bg-white/10 transition-all group relative overflow-hidden mb-3">
           <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="w-10 h-10 bg-white/10 group-hover:bg-primary/20 rounded-lg flex items-center justify-center transition-all group-hover:scale-110 relative z-10 flex-shrink-0">
@@ -310,7 +293,6 @@
         
       </nav>
       
-      <!-- CTA Button -->
       <div class="px-6 pb-8 space-y-4 border-t border-white/10 pt-6">
         <a href="plan-intake.html" class="clip-path-button flex items-center justify-center gap-3 w-full py-4 px-6 bg-primary hover:bg-primary-hover text-navy-dark font-bold transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] group">
           <svg class="w-5 h-5 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -332,7 +314,6 @@
     </div>
   </div>
   
-  <!-- Floating Submenu (TechSpeed Style) -->
   <div id="dienstenSubmenu" class="fixed bg-navy-medium/95 backdrop-blur-md clip-path-button shadow-2xl p-3 z-[60] opacity-0 invisible transition-all duration-400 min-w-[240px]" style="transform: translateY(-10px);">
     <a href="diensten/website-development.html" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-white/90 hover:bg-navy-light/50 hover:text-primary rounded-lg transition-all duration-300 group hover:translate-x-1">
       <svg class="w-5 h-5 text-white/70 group-hover:text-primary transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -372,67 +353,49 @@
     </a>
   </div>
 
-  <!-- MODERN HERO SECTION WITH ABSTRACT GEOMETRIC BACKGROUND -->
   <section class="relative min-h-screen overflow-hidden bg-navy-dark">
-    <!-- Abstract Geometric Background Layer -->
+    
     <div class="absolute inset-0">
-      <!-- Animated Gradient Mesh Base -->
+      
       <div class="absolute inset-0 hero-gradient-mesh"></div>
       
-      <!-- Floating Geometric Shapes -->
       <div class="geometric-shapes-container">
-        <!-- Large Circle - Top Right -->
+        
         <div class="geometric-shape circle-1"></div>
         
-        <!-- Medium Hexagon - Center -->
         <div class="geometric-shape hexagon-1"></div>
         
-        <!-- Organic Blob - Bottom Left -->
         <div class="geometric-shape square-1"></div>
         
-        <!-- Ring - Top Left -->
         <div class="geometric-shape ring-1"></div>
         
-        <!-- Triangle - Bottom Right -->
         <div class="geometric-shape triangle-1"></div>
         
-        <!-- Small Circles Cluster -->
         <div class="geometric-shape circle-2"></div>
         <div class="geometric-shape circle-3"></div>
         
-        <!-- Morphing Blob - Right Side -->
         <div class="geometric-shape square-2"></div>
       </div>
       
-      <!-- Animated Grid Pattern Overlay -->
       <div class="absolute inset-0 hero-grid-pattern"></div>
       
-      <!-- Particle Effect Lines -->
       <div class="absolute inset-0">
         <div class="particle-line line-1"></div>
         <div class="particle-line line-2"></div>
         <div class="particle-line line-3"></div>
       </div>
       
-      <!-- Gradient overlay for depth -->
       <div class="absolute inset-0 bg-gradient-to-b from-navy-dark/60 via-transparent to-navy-medium/80"></div>
       
-      <!-- Vignette effect -->
       <div class="absolute inset-0" style="background: radial-gradient(ellipse at center, transparent 0%, rgba(11, 15, 25, 0.4) 100%);"></div>
     </div>
 
-    <!-- Main Content Grid -->
     <div class="relative z-10 min-h-screen flex items-center">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-20 w-full">
         <div class="max-w-3xl lg:ml-0">
           
-          <!-- Content -->
           <div class="space-y-8">
             
-            <!-- Brand Badge -->
-          
-
-            <!-- Main Heading -->
             <div class="space-y-4 animate-on-load animate-fadeInUp delay-200">
               <h1 class="hero-heading font-black text-foreground leading-[1.1]" style="font-size: clamp(2rem, 5vw, 4.5rem);">
                 Webdesign bureau<br/>
@@ -441,7 +404,6 @@
               </h1>
             </div>
             
-            <!-- Subtitle -->
             <div class="space-y-6 animate-on-load animate-fadeInUp delay-400">
               <p class="hero-subtitle text-foreground/70 leading-relaxed max-w-2xl" style="font-size: clamp(1rem, 1.5vw, 1.25rem);">
                 Wij bouwen snelle, schaalbare websites en webapplicaties vanaf scratch. 
@@ -449,9 +411,8 @@
               </p>
             </div>
             
-            <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-3 lg:gap-4 animate-on-load animate-scaleIn delay-600">
-              <!-- Primary CTA -->
+              
               <a href="plan-intake.html" class="clip-path-button hero-button group relative inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-navy-dark px-6 lg:px-8 py-3 lg:py-4 font-bold transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-primary/40" style="font-size: clamp(0.95rem, 1.2vw, 1.125rem);">
                 <span class="relative z-10 flex items-center gap-2">
                   Plan gratis intake
@@ -461,7 +422,6 @@
                 </span>
               </a>
               
-              <!-- Secondary CTA -->
               <a href="diensten.html" class="clip-path-button hero-button group inline-flex items-center justify-center bg-navy-light/50 backdrop-blur-sm border-2 border-primary/30 text-foreground px-6 lg:px-8 py-3 lg:py-4 font-semibold transition-all duration-300 hover:bg-navy-light hover:border-primary/60 hover:scale-105" style="font-size: clamp(0.95rem, 1.2vw, 1.125rem);">
                 Bekijk diensten
                 <svg class="ml-2 w-4 h-4 lg:w-5 lg:h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -470,7 +430,6 @@
               </a>
             </div>
             
-            <!-- Stats -->
             <div class="grid grid-cols-3 gap-4 lg:gap-6 pt-6 lg:pt-8 border-t border-primary/20 animate-on-load animate-fadeInUp delay-800">
               <div>
                 <div class="font-black text-primary mb-1" style="font-size: clamp(1.5rem, 3vw, 2.25rem);">5+ jaar</div>
@@ -491,13 +450,11 @@
       </div>
     </div>
 
-    <!-- Bottom accent line -->
     <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-yellow-400 to-primary"></div>
   </section> 
 
-  <!-- WHO WE ARE - COMPACT INTRO -->
   <section class="animate-on-scroll py-24 bg-navy-medium relative overflow-hidden">
-    <!-- Subtle pattern -->
+    
     <div class="absolute inset-0 opacity-5">
       <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
       <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
@@ -505,7 +462,6 @@
     
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       
-      <!-- Header -->
       <div class="mb-12">
         <div class="inline-block mb-6">
           <span class="text-primary font-bold uppercase tracking-wider border-l-2 border-primary pl-3" style="font-size: clamp(0.75rem, 1vw, 0.875rem);">Wie zijn wij</span>
@@ -515,10 +471,8 @@
         </h2>
       </div>
 
-      <!-- 2-Column Layout: Content + Features -->
       <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
         
-        <!-- Left: Main Content -->
         <div>
           <p class="text-foreground/80 leading-relaxed mb-6" style="font-size: clamp(1rem, 1.3vw, 1.125rem);">
             Avenix is een webdesign bureau dat websites, webshops en webapplicaties bouwt voor bedrijven van alle groottes. 
@@ -536,7 +490,6 @@
           </a>
         </div>
 
-        <!-- Right: Key Features -->
         <div class="space-y-5">
           <div class="flex items-start gap-4 p-4 bg-navy-light/30 border-l-2 border-primary/30">
             <div class="w-12 h-12 bg-primary/10 flex items-center justify-center rounded-xl flex-shrink-0">
@@ -578,11 +531,9 @@
     </div>
   </section>
 
-  <!-- SERVICES - UNIQUE LAYOUT -->
   <section class="animate-on-scroll py-24 bg-navy-dark relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <!-- Services Header -->
       <div class="text-center mb-12 lg:mb-20">
         <div class="inline-block mb-6">
           <span class="text-primary font-bold uppercase tracking-wider border-l-2 border-primary pl-3" style="font-size: clamp(0.75rem, 1vw, 0.875rem);">Onze diensten</span>
@@ -595,7 +546,6 @@
         </p>
       </div>
 
-      <!-- Featured Service - Website Development -->
       <div class="mb-20 pb-20 border-b border-primary/10">
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
@@ -644,9 +594,8 @@
         </div>
       </div>
 
-      <!-- Other Services - Grid -->
       <div class="grid lg:grid-cols-3 gap-8 lg:gap-12">
-        <!-- Gratis Starter Website -->
+        
         <div class="group relative p-6 bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/30 clip-path-button hover:border-primary/60 transition-all duration-300">
           <div class="flex items-center gap-3 mb-4">
             <svg class="text-primary flex-shrink-0" style="width: clamp(1.75rem, 2.5vw, 2rem); height: clamp(1.75rem, 2.5vw, 2rem);" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
@@ -668,7 +617,6 @@
           </a>
         </div>
 
-        <!-- E-commerce -->
         <div class="group">
           <div class="flex items-center gap-4 mb-6">
             <svg class="text-primary flex-shrink-0" style="width: clamp(1.75rem, 2.5vw, 2rem); height: clamp(1.75rem, 2.5vw, 2rem);" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
@@ -690,7 +638,6 @@
           </a>
         </div>
 
-        <!-- Maatwerk Software -->
         <div class="group">
           <div class="flex items-center gap-4 mb-6">
             <svg class="text-primary flex-shrink-0" style="width: clamp(1.75rem, 2.5vw, 2rem); height: clamp(1.75rem, 2.5vw, 2rem);" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
@@ -713,7 +660,6 @@
         </div>
       </div>
 
-      <!-- Bottom Link -->
       <div class="text-center mt-16 pt-12 border-t border-primary/20">
         <a href="diensten.html" class="inline-flex items-center text-foreground/70 font-medium hover:text-primary transition-colors group">
           Bekijk alle diensten
@@ -725,12 +671,11 @@
     </div>
   </section>
 
-  <!-- FAQ & CONTACT CTA -->
   <section class="animate-on-scroll py-24 bg-navy-dark relative overflow-hidden">
-    <!-- Background decoration -->
+    
     <div class="absolute inset-0">
-      <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+      <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-2xl"></div>
+      <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-2xl"></div>
     </div>
     
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
@@ -759,7 +704,6 @@
         </a>
       </div>
       
-      <!-- Trust indicators -->
       <div class="mt-8 lg:mt-12 pt-6 lg:pt-8 border-t border-primary/20 flex flex-wrap justify-center gap-4 lg:gap-8 text-foreground/60" style="font-size: clamp(0.8rem, 1vw, 0.875rem);">
         <div class="flex items-center gap-2">
           <svg class="w-4 h-4 lg:w-5 lg:h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -783,7 +727,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="bg-navy-dark text-foreground">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid md:grid-cols-4 gap-8">
@@ -792,18 +735,6 @@
                 <p class="text-gray-400 mb-4">
                     Wij zijn een webdesign bureau dat websites, webshops en webapplicaties bouwt voor bedrijven van alle groottes. Van startups tot corporates. Wij worden uw digitale partner.
                 </p>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white hover:scale-110 transition-all duration-300">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                        </svg>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white hover:scale-110 transition-all duration-300">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                        </svg>
-                    </a>
-                </div>
             </div>
 
             <div>
@@ -861,9 +792,6 @@
     </div>
   </footer>
 
-
-
-    <!-- Search Overlay -->
     <div id="search-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg max-w-2xl w-full p-6">
@@ -881,7 +809,6 @@
         </div>
     </div>
 
-    <!-- Cookie Consent -->
     <div id="cookie-bar" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-40 hidden">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between">
             <p class="text-sm mb-4 sm:mb-0">
@@ -893,7 +820,6 @@
         </div>
     </div>
 
-    <!-- Floating Submenu (outside all containers) -->
     <div id="diensten-submenu" class="submenu fixed w-64 clip-path-button p-3 z-[99999] pointer-events-none">
       <a href="diensten/website-development.html" class="submenu-item focus-ring flex items-center justify-between clip-path-button px-3 py-2.5 text-sm hover:bg-primary/5 transition-all rounded-md group">
         Website Development 
@@ -917,7 +843,6 @@
       </a>
     </div>
 
-    <!-- Scripts -->
     <script src="js/main.js"></script>
     
     <script>
@@ -931,7 +856,6 @@
       desktopNav.classList.remove('scrolled');
     }
   });
-
 
       // Desktop submenu functionality
       const dienstenBtn = document.getElementById('dienstenBtn');

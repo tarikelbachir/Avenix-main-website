@@ -12,13 +12,12 @@ html {
 
 /* ===== UTILITY CLASSES ===== */
 
-/* Glass Effects */
 .glass { 
-    backdrop-filter: saturate(160%) blur(10px); 
+    backdrop-filter: saturate(160%) blur(8px);
 }
 
 .glass-effect {
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(12px);
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -217,7 +216,7 @@ html {
 /* Navigation */
 .navbar-scrolled {
     background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(12px); /* Performance optimized: 16px -> 12px */
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
@@ -229,7 +228,7 @@ html {
 
 #desktopNav.scrolled {
     background: hsl(214, 32%, 18%, 0.95);
-    backdrop-filter: blur(24px);
+    backdrop-filter: blur(12px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(250, 204, 21, 0.1);
     top: 1rem;
     padding: 0.5rem 2rem;
@@ -611,7 +610,7 @@ html {
     height: 500px;
     background: radial-gradient(circle, rgba(250, 204, 21, 0.5) 0%, rgba(250, 204, 21, 0.2) 40%, transparent 70%);
     border-radius: 50%;
-    filter: blur(30px);
+    filter: blur(20px);
     animation: floatShape1 25s ease-in-out infinite;
 }
 
@@ -660,7 +659,7 @@ html {
     border-left: 150px solid transparent;
     border-right: 150px solid transparent;
     border-bottom: 260px solid rgba(250, 204, 21, 0.3);
-    filter: blur(18px);
+    filter: blur(12px);
     animation: floatShape2 28s ease-in-out infinite reverse;
 }
 
@@ -672,7 +671,7 @@ html {
     height: 150px;
     background: radial-gradient(circle, rgba(250, 204, 21, 0.45) 0%, rgba(250, 204, 21, 0.2) 50%, transparent 70%);
     border-radius: 50%;
-    filter: blur(22px);
+    filter: blur(15px);
     animation: floatShape3 18s ease-in-out infinite;
 }
 
@@ -1113,7 +1112,12 @@ section .clip-path-button:hover {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* Hamburger animatie */
+/* Hamburger animatie - Performance optimized */
+#newMobileMenuBtn .new-menu-line {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    will-change: transform, opacity;
+}
+
 #newMobileMenuBtn.active .new-menu-line:nth-child(1) {
     transform: translateY(6px) rotate(45deg);
 }
@@ -1127,9 +1131,19 @@ section .clip-path-button:hover {
     transform: translateY(-6px) rotate(-45deg);
 }
 
-/* Menu states */
+#newMobileMenu {
+    will-change: transform;
+    transform: translate3d(0, -100%, 0);
+    transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 #newMobileMenu.menu-open {
-    transform: translateY(0) !important;
+    transform: translate3d(0, 0, 0) !important;
+}
+
+#newMobileMenuOverlay {
+    will-change: opacity;
+    transition: opacity 400ms ease-out, visibility 400ms ease-out;
 }
 
 #newMobileMenuOverlay.active {
@@ -1229,25 +1243,26 @@ body:has(#newMobileMenu.menu-open) .lg\:hidden:not(#newMobileMenu):not(#newMobil
     margin-top: 0.75rem;
 }
 
-/* Menu items stagger animatie - smooth cascade effect */
+/* Menu items stagger animatie - Performance optimized (sneller en lichter) */
 #newMobileMenu.menu-open .mobile-menu-item {
-    animation: slideInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+    animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+    will-change: transform, opacity;
 }
 
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(1) { animation-delay: 0.2s; }
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(2) { animation-delay: 0.25s; }
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(3) { animation-delay: 0.3s; }
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(4) { animation-delay: 0.35s; }
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(5) { animation-delay: 0.4s; }
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(1) { animation-delay: 0.05s; }
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(2) { animation-delay: 0.1s; }
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(3) { animation-delay: 0.15s; }
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(4) { animation-delay: 0.2s; }
+#newMobileMenu.menu-open .mobile-menu-item:nth-child(5) { animation-delay: 0.25s; }
 
 @keyframes slideInUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translate3d(0, 20px, 0);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translate3d(0, 0, 0);
     }
 }
 
