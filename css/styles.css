@@ -1120,18 +1120,12 @@ section .clip-path-button:hover {
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-#newMobileMenuBtn:active .new-menu-line,
-#newMobileMenuBtn.active .new-menu-line {
-    will-change: transform, opacity;
-}
-
 #newMobileMenuBtn.active .new-menu-line:nth-child(1) {
     transform: translateY(6px) rotate(45deg);
 }
 
 #newMobileMenuBtn.active .new-menu-line:nth-child(2) {
     opacity: 0;
-    transform: scaleX(0);
 }
 
 #newMobileMenuBtn.active .new-menu-line:nth-child(3) {
@@ -1139,18 +1133,16 @@ section .clip-path-button:hover {
 }
 
 #newMobileMenu {
-    will-change: transform;
-    transform: translate3d(0, -100%, 0);
-    transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(-100%);
+    transition: transform 0.25s ease;
 }
 
 #newMobileMenu.menu-open {
-    transform: translate3d(0, 0, 0) !important;
+    transform: translateY(0);
 }
 
 #newMobileMenuOverlay {
-    will-change: opacity;
-    transition: opacity 400ms ease-out, visibility 400ms ease-out;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
 #newMobileMenuOverlay.active {
@@ -1165,116 +1157,71 @@ section .clip-path-button:hover {
     position: relative;
 }
 
-/* Mobile header base state - performance optimized */
-.lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) > .mobile-nav-header {
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    will-change: transform, opacity;
-}
-
-/* Verberg originele header wanneer menu open is - performance optimized */
-body:has(#newMobileMenu.menu-open) .lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) {
+/* Verberg originele header wanneer menu open is - gebruik body class i.p.v. :has() */
+body.mobile-menu-open .lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) {
     visibility: hidden;
     pointer-events: none;
 }
 
-body:has(#newMobileMenu.menu-open) .lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) > .mobile-nav-header {
+body.mobile-menu-open .lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) > .mobile-nav-header {
     opacity: 0;
-    transform: translateY(-100%);
 }
 
-/* Dropdown button - wit wanneer gesloten, geel wanneer open */
+/* Dropdown button states */
 .new-dropdown-btn {
     background: rgba(255, 255, 255, 0.05) !important;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
 }
 
 .new-dropdown-btn.open {
     background: rgba(250, 204, 21, 0.15) !important;
 }
 
-/* Diensten menu item - geel wanneer open, wit wanneer gesloten */
 .new-dropdown-btn .w-10.h-10 {
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease;
     background: rgba(255, 255, 255, 0.1) !important;
-}
-
-.new-dropdown-btn .w-10.h-10 svg {
-    transition: color 0.3s ease;
-    color: white !important;
-}
-
-.new-dropdown-btn .new-dropdown-arrow {
-    transition: color 0.3s ease;
-    color: rgba(255, 255, 255, 0.4) !important;
-}
-
-/* Verwijder gele gloed van gradient overlay wanneer gesloten */
-.new-dropdown-btn:not(.open) .absolute.inset-0 {
-    opacity: 0 !important;
-    pointer-events: none;
-}
-
-/* Verwijder gele hover states wanneer dropdown gesloten is */
-.new-dropdown-btn:not(.open):hover .w-10.h-10 {
-    background: rgba(255, 255, 255, 0.15) !important;
-}
-
-.new-dropdown-btn:not(.open):hover .w-10.h-10 svg {
-    color: white !important;
-}
-
-.new-dropdown-btn:not(.open):hover .new-dropdown-arrow {
-    color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .new-dropdown-btn.open .w-10.h-10 {
     background: rgba(250, 204, 21, 0.2) !important;
 }
 
+.new-dropdown-btn .w-10.h-10 svg {
+    transition: color 0.2s ease;
+    color: white !important;
+}
+
 .new-dropdown-btn.open .w-10.h-10 svg {
     color: rgb(250, 204, 21) !important;
 }
 
+.new-dropdown-btn .new-dropdown-arrow {
+    transition: transform 0.2s ease, color 0.2s ease;
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
 .new-dropdown-btn.open .new-dropdown-arrow {
+    transform: rotate(180deg);
     color: rgb(250, 204, 21) !important;
 }
 
-/* Dropdown pijl animatie */
-.new-dropdown-arrow.rotate {
-    transform: rotate(180deg);
+/* Dropdown content - simpel display i.p.v. max-height animatie */
+.new-dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+    opacity: 0;
 }
 
-/* Dropdown content animatie */
 .new-dropdown-content.open {
-    max-height: 500px !important;
+    max-height: 500px;
     margin-top: 0.75rem;
+    opacity: 1;
 }
 
-#newMobileMenu.menu-open .mobile-menu-item {
-    animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) backwards;
-    will-change: transform, opacity;
-    contain: layout style paint;
-}
-
-#newMobileMenu:not(.menu-open) .mobile-menu-item {
-    will-change: auto;
-}
-
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(1) { animation-delay: 0.05s; }
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(2) { animation-delay: 0.1s; }
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(3) { animation-delay: 0.15s; }
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(4) { animation-delay: 0.2s; }
-#newMobileMenu.menu-open .mobile-menu-item:nth-child(5) { animation-delay: 0.25s; }
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 20px, 0);
-    }
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
+/* Menu items - geen animatie, gewoon direct zichtbaar */
+.mobile-menu-item {
+    /* Geen animatie nodig - gewoon direct zichtbaar */
 }
 
 /* Custom scrollbar voor menu */

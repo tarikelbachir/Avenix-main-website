@@ -69,7 +69,7 @@
   </div>
 
   <div class="lg:hidden fixed top-4 left-4 right-4 z-[100]">
-    <div class="mobile-nav-header bg-navy-medium/95 backdrop-blur-md shadow-xl px-6 py-3 flex items-center justify-between">
+    <div class="mobile-nav-header bg-navy-medium/95 shadow-xl px-6 py-3 flex items-center justify-between">
       <a href="../index.html" class="flex-1">
         <img src="../assets/img/avenix_logo_main.svg" alt="Avenix" class="h-18 w-auto filter brightness-0 invert" />
       </a>
@@ -81,11 +81,11 @@
     </div>
   </div>
 
-  <div id="newMobileMenuOverlay" class="lg:hidden fixed inset-0 bg-black/70 backdrop-blur-sm opacity-0 invisible z-[90]"></div>
+  <div id="newMobileMenuOverlay" class="lg:hidden fixed inset-0 bg-black/70 opacity-0 invisible z-[90]"></div>
   <div id="newMobileMenu" class="lg:hidden fixed inset-0 bg-gradient-to-b from-navy-dark via-navy-dark to-navy-medium translate-y-[-100%] z-[95] overflow-y-auto mobile-menu-scroll">
     <div class="min-h-full flex flex-col">
       <div class="fixed top-4 left-4 right-4 z-[100]">      
-        <div class="mobile-nav-header bg-navy-medium/95 backdrop-blur-sm px-6 py-5 flex items-center justify-between border-b border-white/5">
+        <div class="mobile-nav-header bg-navy-medium/95 px-6 py-5 flex items-center justify-between border-b border-white/5">
         <span class="text-white text-xl font-bold tracking-wider">AVENIX</span>
         <button id="closeMobileMenuBtn" type="button" class="w-12 h-12 flex items-center justify-center rounded-sm hover:bg-white/10 transition-all hover:scale-110">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +126,7 @@
           </button>
           
           <div class="new-dropdown-content max-h-0 overflow-hidden transition-all duration-300">
-            <div class="bg-navy-dark/60 backdrop-blur-sm rounded-lg p-2 space-y-1.5 ml-14">
+            <div class="bg-navy-dark/60 rounded-lg p-2 space-y-1.5 ml-14">
               <a href="website-development.html" class="flex items-center gap-3 px-4 py-2.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all group">
                 <svg class="w-4 h-4 text-white/60 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -623,7 +623,7 @@
             <div>
                 <img src="../assets/img/avenix_logo_main.svg" alt="Avenix" class="h-44 w-auto hover:scale-105 transition-transform duration-300 filter brightness-0 invert">
                 <p class="text-gray-400 mb-4">
-                    Wij zijn een webdesign bureau dat websites, webshops en webapplicaties bouwt voor bedrijven van alle groottes. Van startups tot corporates. Wij worden uw digitale partner.
+                    Wij zijn een webdesign bureau dat websites, webshops en webapplicaties bouwt voor ondernemers en groeiende bedrijven. Wij worden jouw webdesign bureau.
                 </p>
             </div>
             <div>
@@ -680,28 +680,5 @@
 
   <script src="../js/main.js" defer></script>
   
-  <script>
-    // Mobile dropdown toggle
-    document.addEventListener('click', function(e) {
-      const trigger = e.target.closest('.mobile-dropdown-trigger, .premium-dropdown-trigger');
-      if (trigger) {
-        const content = trigger.nextElementSibling;
-        const arrow = trigger.querySelector('.mobile-dropdown-arrow, .premium-dropdown-arrow');
-        
-        if (content && arrow) {
-          const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
-          
-          if (isOpen) {
-            content.style.maxHeight = '0px';
-            trigger.classList.remove('dropdown-open');
-          } else {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            trigger.classList.add('dropdown-open');
-          }
-        }
-      }
-    });
-  
-  </script>
 </body>
 </html>
