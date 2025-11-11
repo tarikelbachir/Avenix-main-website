@@ -16,8 +16,3 @@ pages_build_output_dir = "."
 [dev]
 port = 8788
 
-# Optional: Custom routes
-# [[routes]]
-# pattern = "/send-email"
-# script = "functions/send-email.js"
-

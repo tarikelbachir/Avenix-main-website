@@ -8,10 +8,13 @@
     <meta property="og:title" content="Plan Intake - Avenix webdesign bureau" />
     <meta property="og:description" content="Plan uw gratis intake gesprek met Avenix. Professioneel advies voor uw website, webshop of webapplicatie." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://avenix.nl/plan-intake.html" />
     
     <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon.png">
     
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -291,7 +294,7 @@
     </div>
   </div>
   
-  <div id="dienstenSubmenu" class="fixed bg-navy-medium/95 backdrop-blur-md clip-path-button shadow-2xl p-3 z-[60] opacity-0 invisible transition-all duration-400 min-w-[240px]" style="transform: translateY(-10px);">
+  <div id="dienstenSubmenu" class="fixed bg-navy-medium/95 backdrop-blur-md clip-path-button shadow-2xl p-3 z-[60] opacity-0 invisible min-w-[240px]">
     <a href="diensten/website-development.html" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-white/90 hover:bg-navy-light/50 hover:text-primary rounded-lg transition-all duration-300 group hover:translate-x-1">
       <svg class="w-5 h-5 text-white/70 group-hover:text-primary transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
@@ -506,7 +509,6 @@
                 <h3 class="font-semibold text-white mb-1">Locatie</h3>
                 <p class="text-gray-400">Gyroscoopweg 23</p>
                 <p class="text-gray-400">1042 AC Amsterdam</p>
-                <p class="text-gray-400 text-sm mt-1">Actief in heel Nederland</p>
               </div>
             </div>
 
@@ -626,67 +628,6 @@
       </div>
 
   <script>
-// Desktop Nav Scroll Effect
-const desktopNav = document.getElementById('desktopNav');
-if (desktopNav) {
-  window.addEventListener('scroll', function() {
-    if (window.scrollY > 50) {
-      desktopNav.classList.add('scrolled');
-    } else {
-      desktopNav.classList.remove('scrolled');
-    }
-  });
-}
-
-  // Desktop submenu functionality
-  const dienstenBtn = document.getElementById('dienstenBtn');
-  const dienstenSubmenu = document.getElementById('dienstenSubmenu');
-  
-  let hideTimeout;
-  
-  function positionSubmenu() {
-    if (!dienstenBtn || !dienstenSubmenu) return;
-    const btnRect = dienstenBtn.getBoundingClientRect();
-    dienstenSubmenu.style.left = btnRect.left + 'px';
-    dienstenSubmenu.style.top = (btnRect.bottom + 8) + 'px';
-  }
-
-  function showSubmenu() {
-    clearTimeout(hideTimeout);
-    positionSubmenu();
-    dienstenSubmenu.style.opacity = '1';
-    dienstenSubmenu.style.visibility = 'visible';
-    dienstenSubmenu.style.transform = 'translateY(0)';
-  }
-
-  function hideSubmenu() {
-    hideTimeout = setTimeout(() => {
-      dienstenSubmenu.style.opacity = '0';
-      dienstenSubmenu.style.visibility = 'hidden';
-      dienstenSubmenu.style.transform = 'translateY(-10px)';
-    }, 150);
-  }
-
-  if (dienstenBtn && dienstenSubmenu) {
-    dienstenBtn.addEventListener('mouseenter', showSubmenu);
-    dienstenBtn.addEventListener('mouseleave', hideSubmenu);
-    dienstenSubmenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-    dienstenSubmenu.addEventListener('mouseleave', hideSubmenu);
-    window.addEventListener('scroll', positionSubmenu);
-    window.addEventListener('resize', positionSubmenu);
-  }
-
-      // Active page highlighting
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  const navLinks = document.querySelectorAll('.nav-link');
-  
-  navLinks.forEach(link => {
-    const href = link.getAttribute('href');
-    if (href && href.includes(currentPage)) {
-      link.classList.add('active');
-    }
-  });
-
   // ==========================================
   // FORM SUBMISSION HANDLER
   // ==========================================
@@ -863,132 +804,9 @@ if (desktopNav) {
       if (loadingText) loadingText.classList.remove('hidden');
       responseMessage.classList.add('hidden');
       
-      // TIJDELIJK UITGESCHAKELD - Turnstile verificatie
-      // TODO: Heractiveer na oplossen MailChannels probleem
-      /*
-      // Check of Turnstile is geladen
-      if (!window.turnstile) {
-        responseMessage.classList.remove('hidden');
-        responseMessage.className = 'p-4 rounded-lg [clip-path:polygon(0_0,calc(100%-12px)_0,100%_100%,12px_100%)] bg-yellow-500/20 border border-yellow-500 text-white';
-        responseMessage.setAttribute('role', 'alert');
-        responseMessage.setAttribute('aria-live', 'assertive');
-        
-        const warningDiv = document.createElement('div');
-        warningDiv.className = 'flex items-start gap-3';
-        warningDiv.innerHTML = `
-          <svg class="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-          </svg>
-          <div>
-            <strong class="block mb-1">Beveiliging wordt geladen</strong>
-            <p class="text-sm">Wacht even en probeer het opnieuw.</p>
-          </div>
-        `;
-        responseMessage.textContent = '';
-        responseMessage.appendChild(warningDiv);
-        
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.setAttribute('aria-busy', 'false');
-          const submitText = submitBtn.querySelector('.submit-text');
-          const loadingText = submitBtn.querySelector('.loading-text');
-          if (submitText) submitText.classList.remove('hidden');
-          if (loadingText) loadingText.classList.add('hidden');
-        }
-        return;
-      }
-      */
-      
       // Get form data
       const formData = new FormData(form);
       const payload = Object.fromEntries(formData.entries());
-      
-      // TIJDELIJK UITGESCHAKELD - Turnstile token ophalen
-      // TODO: Heractiveer na oplossen MailChannels probleem
-      /*
-      // Haal Turnstile token op - probeer meerdere methoden
-      let turnstileToken = null;
-      
-      // Methode 1: Via hidden input (als Turnstile die toevoegt)
-      const hiddenInput = form.querySelector('input[name="cf-turnstile-response"]');
-      if (hiddenInput && hiddenInput.value) {
-        turnstileToken = hiddenInput.value;
-      }
-      
-      // Methode 2: Via Turnstile widget API (betrouwbaarder)
-      if (!turnstileToken && window.turnstile) {
-        const widget = form.querySelector('.cf-turnstile');
-        if (widget) {
-          // Probeer eerst opgeslagen widget ID (via globale variabele)
-          let widgetId = window.turnstileWidgetId || widget.getAttribute('data-widget-id');
-          
-          // Als geen widget ID, probeer alle widgets op de pagina
-          if (!widgetId) {
-            const widgets = document.querySelectorAll('.cf-turnstile');
-            widgets.forEach(w => {
-              const id = w.getAttribute('data-widget-id');
-              if (id) widgetId = id;
-            });
-          }
-          
-          // Probeer token op te halen met widget ID
-          if (widgetId) {
-            turnstileToken = window.turnstile.getResponse(widgetId);
-          }
-          
-          // Als nog steeds geen token, probeer alle widgets met data-widget-id
-          if (!turnstileToken) {
-            const allWidgets = document.querySelectorAll('[data-widget-id]');
-            allWidgets.forEach(w => {
-              const id = w.getAttribute('data-widget-id');
-              if (id) {
-                const token = window.turnstile.getResponse(id);
-                if (token) turnstileToken = token;
-              }
-            });
-          }
-        }
-      }
-      
-      // Methode 3: Check of token al in payload zit (via FormData)
-      if (!turnstileToken && payload['cf-turnstile-response']) {
-        turnstileToken = payload['cf-turnstile-response'];
-      }
-      
-      if (turnstileToken) {
-        payload['cf-turnstile-response'] = turnstileToken;
-      } else {
-        // Geen token gevonden - vraag gebruiker om verificatie te voltooien
-        responseMessage.classList.remove('hidden');
-        responseMessage.className = 'p-4 rounded-lg [clip-path:polygon(0_0,calc(100%-12px)_0,100%_100%,12px_100%)] bg-yellow-500/20 border border-yellow-500 text-white';
-        responseMessage.setAttribute('role', 'alert');
-        responseMessage.setAttribute('aria-live', 'assertive');
-        
-        const warningDiv = document.createElement('div');
-        warningDiv.className = 'flex items-start gap-3';
-        warningDiv.innerHTML = `
-          <svg class="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-          </svg>
-          <div>
-            <strong class="block mb-1">Verificatie vereist</strong>
-            <p class="text-sm">Voltooi de beveiligingsverificatie alstublieft.</p>
-          </div>
-        `;
-        responseMessage.textContent = '';
-        responseMessage.appendChild(warningDiv);
-        
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.setAttribute('aria-busy', 'false');
-          const submitText = submitBtn.querySelector('.submit-text');
-          const loadingText = submitBtn.querySelector('.loading-text');
-          if (submitText) submitText.classList.remove('hidden');
-          if (loadingText) loadingText.classList.add('hidden');
-        }
-        return;
-      }
-      */
       
       try {
         const response = await fetch('/api/intake', {
@@ -1027,13 +845,6 @@ if (desktopNav) {
           
           // Reset form
           form.reset();
-          // TIJDELIJK UITGESCHAKELD - Turnstile reset
-          // TODO: Heractiveer na oplossen MailChannels probleem
-          /*
-          if (window.turnstile) {
-            turnstile.reset();
-          }
-          */
           
           // Clear all errors
           fields.forEach(fieldId => {
@@ -1096,7 +907,7 @@ if (desktopNav) {
   }
   </script>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js" defer></script>
 
 </body>
 </html>

@@ -1,6 +1,4 @@
 export const onRequestPost = async ({ request, env }) => {
-  const startTime = Date.now();
-
   try {
     const data = await request.json().catch(() => null);
     if (!data) {
@@ -12,8 +10,7 @@ export const onRequestPost = async ({ request, env }) => {
       email = "",
       message = "",
       company = "",
-      ["_form_verification"]: honeypot = "",
-      ["cf-turnstile-response"]: token
+      ["_form_verification"]: honeypot = ""
     } = data;
 
     if (honeypot) {
@@ -29,26 +26,6 @@ export const onRequestPost = async ({ request, env }) => {
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       return json({ error: "Ongeldig e-mailadres" }, 400);
     }
-    
-    // TIJDELIJK UITGESCHAKELD - Turnstile verificatie
-    // TODO: Heractiveer na oplossen MailChannels probleem
-    /*
-    const ip = request.headers.get("CF-Connecting-IP") || "";
-    const form = new URLSearchParams();
-    form.append("secret", env.TURNSTILE_SECRET_KEY);
-    form.append("response", token);
-    form.append("remoteip", ip);
-
-    const tsResp = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: form
-    });
-    const ts = await tsResp.json();
-    
-    if (!ts.success) {
-      return json({ error: "Captcha failed" }, 400);
-    }
-    */
 
     // Get and validate mailTo
     let mailTo = "info@avenix.nl";
@@ -61,8 +38,6 @@ export const onRequestPost = async ({ request, env }) => {
       }
     }
     
-    console.log('mailTo value:', mailTo, 'type:', typeof mailTo, 'length:', mailTo.length);
-    
     const emailSubject = `Nieuw contactformulier bericht van ${name}`;
 
     // Send email via Resend
@@ -73,8 +48,6 @@ export const onRequestPost = async ({ request, env }) => {
       subject: emailSubject,
       html: renderHtml({ name, email, message, company })
     };
-
-    console.log('Resend payload to field:', JSON.stringify(emailPayload.to));
 
     try {
       const resendResp = await fetch('https://api.resend.com/emails', {
@@ -99,8 +72,7 @@ export const onRequestPost = async ({ request, env }) => {
         }, 500);
       }
 
-      const resendData = await resendResp.json();
-      console.log('Email sent successfully via Resend:', resendData.id);
+      await resendResp.json();
 
       return json({ ok: true }, 200);
     } catch (error) {

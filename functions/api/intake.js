@@ -1,6 +1,4 @@
 export const onRequestPost = async ({ request, env }) => {
-  const startTime = Date.now();
-
   try {
     const data = await request.json().catch(() => null);
     if (!data) {
@@ -14,8 +12,7 @@ export const onRequestPost = async ({ request, env }) => {
       company = "",
       subject = "",
       message = "",
-      ["_form_verification"]: honeypot = "",
-      ["cf-turnstile-response"]: token
+      ["_form_verification"]: honeypot = ""
     } = data;
 
     if (honeypot) {
@@ -26,14 +23,6 @@ export const onRequestPost = async ({ request, env }) => {
       return json({ success: false, message: 'Alle verplichte velden moeten worden ingevuld' }, 400);
     }
     
-    // TIJDELIJK UITGESCHAKELD - Turnstile verificatie
-    // TODO: Heractiveer na oplossen MailChannels probleem
-    /*
-    if (!token) {
-      return json({ success: false, message: 'Captcha verificatie vereist' }, 400);
-    }
-    */
-    
     if (name.length > 120 || email.length > 254 || message.length > 5000) {
       return json({ success: false, message: 'Invoer te lang' }, 400);
     }
@@ -41,26 +30,6 @@ export const onRequestPost = async ({ request, env }) => {
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       return json({ success: false, message: 'Ongeldig e-mailadres' }, 400);
     }
-    
-    // TIJDELIJK UITGESCHAKELD - Turnstile verificatie
-    // TODO: Heractiveer na oplossen MailChannels probleem
-    /*
-    const ip = request.headers.get("CF-Connecting-IP") || "";
-    const form = new URLSearchParams();
-    form.append("secret", env.TURNSTILE_SECRET_KEY);
-    form.append("response", token);
-    form.append("remoteip", ip);
-
-    const tsResp = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: form
-    });
-    const ts = await tsResp.json();
-    
-    if (!ts.success) {
-      return json({ success: false, message: 'Captcha verificatie mislukt' }, 400);
-    }
-    */
 
     // Get and validate mailTo
     let mailTo = "info@avenix.nl";
@@ -73,8 +42,6 @@ export const onRequestPost = async ({ request, env }) => {
       }
     }
     
-    console.log('mailTo value:', mailTo, 'type:', typeof mailTo, 'length:', mailTo.length);
-    
     const emailSubject = `Nieuwe intake aanvraag van ${name}`;
 
     // Send email via Resend
@@ -85,8 +52,6 @@ export const onRequestPost = async ({ request, env }) => {
       subject: emailSubject,
       html: renderHtml({ name, email, phone, company, subject, message })
     };
-
-    console.log('Resend payload to field:', JSON.stringify(emailPayload.to));
 
     try {
       const resendResp = await fetch('https://api.resend.com/emails', {
@@ -111,8 +76,7 @@ export const onRequestPost = async ({ request, env }) => {
         }, 500);
       }
 
-      const resendData = await resendResp.json();
-      console.log('Email sent successfully via Resend:', resendData.id);
+      await resendResp.json();
 
       return json({ 
         success: true, 
@@ -201,21 +165,4 @@ function renderHtml({ name, email, phone, company, subject, message }) {
       </div>
     </div>
   `;
-}
-
-function parseFrom(from) {
-  if (!from) return "";
-  const m = /<([^>]+)>/.exec(from);
-  return m ? m[1] : from;
-}
-
-function parseName(from) {
-  if (!from) return "";
-  const m = /^([^<]+)</.exec(from);
-  return m ? m[1].trim() : "";
-}
-
-function getDomainFromTo(to) {
-  const m = /@(.+)$/.exec(to || "");
-  return m ? m[1] : "example.com";
 }

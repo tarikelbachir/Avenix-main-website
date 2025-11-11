@@ -8,11 +8,11 @@
     <meta property="og:title" content="Website laten maken – Snel, veilig & schaalbaar | Avenix" />
     <meta property="og:description" content="We bouwen snelle, veilige en schaalbare websites die niet alleen goed ogen, maar werken." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://avenixsoftware.nl/diensten/website-development.html" />
-    
+    <meta property="og:url" content="https://avenix.nl/diensten/website-development.html" />    
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/img/favicon.png">
-    
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,14 +23,11 @@
   
   <div id="desktopNav" class="fixed top-4 lg:top-8 left-1/2 transform -translate-x-1/2 z-50 hidden lg:block transition-all duration-300 max-w-[98vw] scale-90 xl:scale-100">
     <div class="flex items-center gap-2 lg:gap-3 xl:gap-8">
-      
       <a href="../index.html" class="logo-container group overflow-hidden" style="width: clamp(140px, 15vw, 180px); height: clamp(60px, 8vw, 80px);">
         <img src="../assets/img/avenix_logo_main.svg" alt="Avenix" class="h-full w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 group-hover:drop-shadow-lg filter brightness-0 invert object-contain" />
       </a>
-      
       <nav class="nav-links-wrapper clip-path-button bg-navy-medium/80 backdrop-blur-md px-2 lg:px-4 xl:px-6 py-2 lg:py-2.5 flex items-center gap-2 lg:gap-4 xl:gap-6 text-[0.75rem] lg:text-xs xl:text-sm font-medium whitespace-nowrap">
         <a href="../index.html" class="nav-link text-white hover:text-white transition-colors relative">Home</a>
-        
         <div class="relative group">
           <button class="nav-link text-white hover:text-white transition-colors flex items-center gap-1 relative" id="dienstenBtn">
             Diensten
@@ -39,14 +36,12 @@
             </svg>
           </button>
         </div>
-        
         <a href="../over-ons.html" class="nav-link text-white hover:text-white transition-colors relative">Over ons</a>
         <a href="../faq.html" class="nav-link text-white hover:text-white transition-colors relative">FAQ</a>
         <a href="../contact.html" class="nav-link text-white hover:text-white transition-colors relative">Contact</a>
       </nav>
       
       <div class="contact-hub-sidebyside flex items-center gap-2 lg:gap-3 ml-1 lg:ml-2 xl:ml-4">
-        
         <a href="tel:+31681001053" class="phone-badge clip-path-button bg-navy-medium/70 backdrop-blur-sm px-2.5 lg:px-3 xl:px-4 py-2 lg:py-2.5 transition-all duration-300 hover:bg-navy-medium/85 group">
           <div class="flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5 lg:w-4 lg:h-4 text-primary flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +63,7 @@
         </span>
         <div class="gradient-overlay clip-path-button"></div>
           <div class="shine-overlay"></div>
-      </a>
+        </a>
       </div>
     </div>
   </div>
@@ -78,7 +73,6 @@
       <a href="../index.html" class="flex-1">
         <img src="../assets/img/avenix_logo_main.svg" alt="Avenix" class="h-18 w-auto filter brightness-0 invert" />
       </a>
-      
       <button id="newMobileMenuBtn" type="button" class="w-12 h-12 flex flex-col items-center justify-center gap-1.5 relative">
         <span class="new-menu-line w-6 h-0.5 bg-white rounded-full transition-all duration-300"></span>
         <span class="new-menu-line w-6 h-0.5 bg-white rounded-full transition-all duration-300"></span>
@@ -88,12 +82,9 @@
   </div>
 
   <div id="newMobileMenuOverlay" class="lg:hidden fixed inset-0 bg-black/70 backdrop-blur-sm opacity-0 invisible z-[90]"></div>
-
   <div id="newMobileMenu" class="lg:hidden fixed inset-0 bg-gradient-to-b from-navy-dark via-navy-dark to-navy-medium translate-y-[-100%] z-[95] overflow-y-auto mobile-menu-scroll">
     <div class="min-h-full flex flex-col">
-      
       <div class="fixed top-4 left-4 right-4 z-[100]">
-        
         <div class="mobile-nav-header bg-navy-medium/95 backdrop-blur-sm px-6 py-5 flex items-center justify-between border-b border-white/5">
         <span class="text-white text-xl font-bold tracking-wider">AVENIX</span>
         <button id="closeMobileMenuBtn" type="button" class="w-12 h-12 flex items-center justify-center rounded-sm hover:bg-white/10 transition-all hover:scale-110">
@@ -109,7 +100,6 @@
       </div>
       
       <nav class="flex-1 px-6 py-6">
-        
         <a href="../index.html" class="mobile-menu-item clip-path-button flex items-center gap-4 px-5 py-4 text-white font-semibold bg-white/5 hover:bg-white/10 transition-all group relative overflow-hidden mb-3">
           <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="w-10 h-10 bg-white/10 group-hover:bg-primary/20 rounded-lg flex items-center justify-center transition-all group-hover:scale-110 relative z-10 flex-shrink-0">
@@ -212,7 +202,6 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
           </svg>
         </a>
-        
       </nav>
       
       <div class="px-6 pb-8 space-y-4 border-t border-white/10 pt-6">
@@ -232,11 +221,10 @@
           <span class="font-medium">+31 6 8100 1053</span>
         </a>
       </div>
-      
     </div>
   </div>
   
-  <div id="dienstenSubmenu" class="fixed bg-navy-medium/95 backdrop-blur-md clip-path-button shadow-2xl p-3 z-[60] opacity-0 invisible transition-all duration-400 min-w-[240px]" style="transform: translateY(-10px);">
+  <div id="dienstenSubmenu" class="fixed bg-navy-medium/95 backdrop-blur-md clip-path-button shadow-2xl p-3 z-[60] opacity-0 invisible min-w-[240px]">
     <a href="website-development.html" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-white/90 hover:bg-navy-light/50 hover:text-primary rounded-lg transition-all duration-300 group hover:translate-x-1">
       <svg class="w-5 h-5 text-white/70 group-hover:text-primary transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
@@ -276,14 +264,12 @@
   </div>
 
   <main class="pt-32 lg:pt-40 pb-16">
-    
     <section class="relative min-h-screen overflow-hidden bg-navy-dark flex items-start pt-32 sm:pt-40">
       <div class="absolute inset-0 -z-10">
         <div class="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-2xl animate-float"></div>
         <div class="absolute bottom-20 right-20 w-40 h-40 bg-primary/10 rounded-full blur-2xl animate-float" style="animation-delay: 2s;"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary/5 to-primary/5 rounded-full blur-2xl animate-pulse"></div>
       </div>
-
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative w-full">
         <div class="text-center">
           <div class="inline-block mb-6 animate-on-load animate-fadeInUp">
@@ -296,7 +282,6 @@
             Snelle, conversie-gerichte websites die niet alleen mooi zijn, maar resultaten opleveren. 
             SEO-geoptimaliseerd, responsive en gebouwd om te blijven.
           </p>
-          
           <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-on-load animate-fadeInUp delay-600">
             <a href="../plan-intake.html" class="group inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-navy-dark px-8 py-4 font-bold transition-all duration-300 hover:scale-[1.01] shadow-2xl hover:shadow-primary/25 clip-path-button">
               <span class="flex items-center gap-2">
@@ -332,9 +317,7 @@
         <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
         <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
       </div>
-      
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <div class="mb-16 scroll-reveal">
           <div class="flex items-center gap-3 mb-4">
             <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -352,14 +335,12 @@
         </div>
 
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 mb-20 scroll-reveal">
-          
           <div class="relative">
             <div class="aspect-[4/3] bg-navy-dark/50 border border-white/10 overflow-hidden clip-path-button">
               <img src="../assets/img/web_development_stock.png" alt="Developer aan het werk met code op scherm" class="w-full h-full object-cover" loading="lazy" />
             </div>
             <div class="absolute inset-0 bg-gradient-to-t from-navy-dark/20 to-transparent pointer-events-none"></div>
           </div>
-          
           <div class="space-y-8">
             <div class="flex items-start gap-4 p-4 bg-navy-light/30 border-l-2 border-primary/30">
               <div class="w-12 h-12 bg-primary/10 flex items-center justify-center rounded-xl flex-shrink-0">
@@ -397,7 +378,6 @@
 
     <section class="py-24 bg-navy-dark relative">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <div class="mb-16 scroll-reveal">
           <div class="max-w-3xl">
             <h2 class="font-bold text-foreground mb-6" style="font-size: clamp(2rem, 3.5vw, 2.75rem);">
@@ -408,9 +388,7 @@
             </p>
           </div>
         </div>
-
         <div class="grid md:grid-cols-2 gap-8 mb-12 scroll-reveal">
-          
           <div class="p-6 bg-navy-medium/30 border border-white/10 clip-path-button hover:border-primary/30 transition-all duration-300">
             <div class="flex items-center gap-4 mb-4">
               <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
@@ -470,7 +448,6 @@
 
     <section id="starter" class="py-24 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 relative overflow-hidden">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <div class="mb-12 scroll-reveal">
           <div class="inline-flex items-center gap-2 mb-4">
             <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -550,7 +527,6 @@
 
     <section class="py-24 bg-navy-medium/50 relative">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <div class="mb-16 scroll-reveal">
           <h2 class="font-bold text-foreground mb-6" style="font-size: clamp(2rem, 3.5vw, 2.75rem);">
             Meer dan een website.<br/><span class="text-primary">Een digitale fundering.</span>
@@ -558,7 +534,6 @@
         </div>
 
         <div class="grid md:grid-cols-2 gap-8 mb-20 scroll-reveal">
-          
           <div class="flex items-start gap-4 p-6 bg-navy-dark/30 border border-white/10 clip-path-button hover:border-primary/20 transition-all duration-300">
             <div class="w-12 h-12 bg-primary/10 flex items-center justify-center rounded-xl flex-shrink-0">
               <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -634,9 +609,7 @@
 
         <div class="border-t border-white/10 pt-16 scroll-reveal">
           <h3 class="font-bold text-foreground mb-12" style="font-size: clamp(1.5rem, 2.5vw, 2rem);">Gebouwd met moderne tools</h3>
-          
           <div class="grid md:grid-cols-3 gap-8 mb-12">
-            
             <div class="tech-card group p-6 bg-navy-dark/30 border border-white/10 clip-path-button hover:border-primary/30 hover:bg-navy-dark/50 transition-all duration-300 cursor-pointer">
               <div class="w-14 h-14 bg-primary/10 flex items-center justify-center rounded-xl mb-4 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
                 <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -691,7 +664,6 @@
       </div>
       
       <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <div class="text-center mb-20 scroll-reveal">
           <h2 class="font-bold text-foreground mb-6" style="font-size: clamp(2rem, 3.5vw, 2.75rem);">
             Klaar om te bouwen?
@@ -818,57 +790,9 @@
     </div>
   </footer>
 
-  <script src="../js/main.js"></script>
+  <script src="../js/main.js" defer></script>
   
   <script>
-    // Desktop Nav Scroll Effect
-    const desktopNav = document.getElementById('desktopNav');
-    window.addEventListener('scroll', function() {
-      if (window.scrollY > 50) {
-        desktopNav.classList.add('scrolled');
-      } else {
-        desktopNav.classList.remove('scrolled');
-      }
-    });
-  
-    // Desktop submenu functionality
-    const dienstenBtn = document.getElementById('dienstenBtn');
-    const dienstenSubmenu = document.getElementById('dienstenSubmenu');
-    
-    let hideTimeout;
-    
-    function positionSubmenu() {
-      if (!dienstenBtn || !dienstenSubmenu) return;
-      const btnRect = dienstenBtn.getBoundingClientRect();
-      dienstenSubmenu.style.left = btnRect.left + 'px';
-      dienstenSubmenu.style.top = (btnRect.bottom + 8) + 'px';
-    }
-  
-    function showSubmenu() {
-      clearTimeout(hideTimeout);
-      positionSubmenu();
-      dienstenSubmenu.style.opacity = '1';
-      dienstenSubmenu.style.visibility = 'visible';
-      dienstenSubmenu.style.transform = 'translateY(0)';
-    }
-  
-    function hideSubmenu() {
-      hideTimeout = setTimeout(() => {
-        dienstenSubmenu.style.opacity = '0';
-        dienstenSubmenu.style.visibility = 'hidden';
-        dienstenSubmenu.style.transform = 'translateY(-10px)';
-      }, 150);
-    }
-  
-    if (dienstenBtn && dienstenSubmenu) {
-      dienstenBtn.addEventListener('mouseenter', showSubmenu);
-      dienstenBtn.addEventListener('mouseleave', hideSubmenu);
-      dienstenSubmenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-      dienstenSubmenu.addEventListener('mouseleave', hideSubmenu);
-      window.addEventListener('scroll', positionSubmenu);
-      window.addEventListener('resize', positionSubmenu);
-    }
-  
     // Mobile dropdown toggle
     document.addEventListener('click', function(e) {
       const trigger = e.target.closest('.mobile-dropdown-trigger, .premium-dropdown-trigger');
@@ -890,37 +814,6 @@
       }
     });
   
-    // Active page highlighting
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach(link => {
-      const href = link.getAttribute('href');
-      if (href && href.includes(currentPage)) {
-        link.classList.add('active');
-      }
-    });
-
-    // Scroll Reveal Animaties - Licht en performant met IntersectionObserver
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-          // Stop met observeren na reveal voor betere performance
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
-
-    // Observe alle elementen met scroll-reveal class
-    document.querySelectorAll('.scroll-reveal').forEach(el => {
-      observer.observe(el);
-    });
 
     // Tech Stack Cards Interactive Effect
     const techCards = document.querySelectorAll('.tech-card');

@@ -223,7 +223,12 @@ html {
 
 /* Desktop Nav Scrolled State */
 #desktopNav {
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                backdrop-filter 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    contain: layout style paint;
 }
 
 #desktopNav.scrolled {
@@ -233,18 +238,11 @@ html {
     top: 1rem;
     padding: 0.5rem 2rem;
     clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 100%, 24px 100%);
-    animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: background, backdrop-filter, box-shadow;
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -10px);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
+#desktopNav:not(.scrolled) {
+    will-change: auto;
 }
 
 #desktopNav.scrolled .nav-link {
@@ -263,6 +261,7 @@ html {
 }
 
 #desktopNav.scrolled img {
+    will-change: filter;
     filter: brightness(0) invert(1) !important;
 }
 
@@ -340,10 +339,14 @@ html {
     width: 100%;
 }
 
-/* Smooth transition for all states */
-.nav-link,
-.nav-link::after {
+.nav-link:hover,
+.nav-link:hover::after {
     will-change: transform, width;
+}
+
+.nav-link:not(:hover),
+.nav-link:not(:hover)::after {
+    will-change: auto;
 }
 
 /* Diensten button (dropdown trigger) consistency */
@@ -1115,6 +1118,10 @@ section .clip-path-button:hover {
 /* Hamburger animatie - Performance optimized */
 #newMobileMenuBtn .new-menu-line {
     transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+#newMobileMenuBtn:active .new-menu-line,
+#newMobileMenuBtn.active .new-menu-line {
     will-change: transform, opacity;
 }
 
@@ -1243,10 +1250,14 @@ body:has(#newMobileMenu.menu-open) .lg\:hidden:not(#newMobileMenu):not(#newMobil
     margin-top: 0.75rem;
 }
 
-/* Menu items stagger animatie - Performance optimized (sneller en lichter) */
 #newMobileMenu.menu-open .mobile-menu-item {
     animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) backwards;
     will-change: transform, opacity;
+    contain: layout style paint;
+}
+
+#newMobileMenu:not(.menu-open) .mobile-menu-item {
+    will-change: auto;
 }
 
 #newMobileMenu.menu-open .mobile-menu-item:nth-child(1) { animation-delay: 0.05s; }
@@ -1535,6 +1546,20 @@ body:has(#newMobileMenu.menu-open) .lg\:hidden:not(#newMobileMenu):not(#newMobil
         padding-left: max(0px, env(safe-area-inset-left));
         padding-right: max(0px, env(safe-area-inset-right));
     }
+}
+
+#dienstenSubmenu {
+  transform: translate3d(0, -10px, 0);
+  transition: opacity 0.2s ease-out, visibility 0.2s ease-out, transform 0.2s ease-out;
+  contain: layout style paint;
+}
+
+#dienstenSubmenu:not([style*="opacity: 0"]) {
+  will-change: transform, opacity;
+}
+
+#dienstenSubmenu[style*="opacity: 0"] {
+  will-change: auto;
 }
 
 /* ===== EINDE VAN ALGEMENE STYLES ===== */

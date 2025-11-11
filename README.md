@@ -3,7 +3,7 @@
 **Modern webdesign bureau website** met serverless email functionaliteit.
 
 [![Cloudflare Pages](https://img.shields.io/badge/Hosted%20on-Cloudflare%20Pages-orange)](https://pages.cloudflare.com)
-[![MailChannels](https://img.shields.io/badge/Email-MailChannels-blue)](https://mailchannels.com)
+[![Resend](https://img.shields.io/badge/Email-Resend-blue)](https://resend.com)
 
 ---
 
@@ -12,8 +12,8 @@
 - **Frontend:** HTML5, Tailwind CSS, Vanilla JavaScript
 - **Hosting:** Cloudflare Pages (Edge deployment)
 - **Functions:** Cloudflare Workers (Serverless)
-- **Email:** MailChannels (Gratis voor Cloudflare)
-- **Security:** CSP, HSTS, Security Headers, Cloudflare Turnstile
+- **Email:** Resend API (Transactionele emails)
+- **Security:** CSP, HSTS, Security Headers, Honeypot spam protection
 - **SEO:** Sitemap, robots.txt, Open Graph
 
 ---
@@ -24,19 +24,18 @@
 Avenix-main-website/
 ├── functions/              # Cloudflare Workers
 │   ├── api/
-│   │   └── contact.js     # Contact form API endpoint (Turnstile + Resend)
-│   ├── send-email.js      # Legacy email endpoint
+│   │   ├── contact.js     # Contact form API endpoint (Resend)
+│   │   └── intake.js       # Intake form API endpoint (Resend)
 │   └── _middleware.js     # Security headers
 │
 ├── assets/
 │   └── img/               # Images & logos
 │
 ├── css/
-│   └── styles.css         # Custom styles (1707 lijnen)
+│   └── styles.css         # Custom styles
 │
 ├── js/
-│   ├── main.js            # Core functionality
-│   └── form-handler.js    # Form submissions
+│   └── main.js            # Core functionality
 │
 ├── diensten/              # Service pages
 │   ├── website-development.html
@@ -72,7 +71,7 @@ Avenix-main-website/
 - **SEO optimized** - Sitemap, meta tags, Open Graph
 - **Performance** - 90+ PageSpeed score
 - **GDPR compliant** - AVG privacybeleid
-- **Spam protection** - Cloudflare Turnstile + Honeypot field
+- **Spam protection** - Honeypot field
 - **Responsive** - Mobile-first design
 
 ---
@@ -82,14 +81,16 @@ Avenix-main-website/
 ### Vereisten:
 - GitHub account
 - Cloudflare account (gratis)
-- (Geen extra accounts nodig - MailChannels is gratis!)
+- Resend account (gratis tier beschikbaar)
 
 ### 3-stappen deployment:
 
-#### 1️⃣ Turnstile Setup (2 min)
+#### 1️⃣ Resend API Key Setup (2 min)
 ```
-✅ Al gedaan! Jouw keys zijn al geconfigureerd.
-Voeg alleen de secret key toe aan Environment Variables (zie stap 3)
+1. Maak account op: https://resend.com
+2. Ga naar API Keys sectie
+3. Maak nieuwe API key aan
+4. Kopieer de API key (begint met re_...)
 ```
 
 #### 2️⃣ GitHub Push (2 min)
@@ -108,20 +109,12 @@ git push -u origin main
 3. Framework: None | Build: [empty] | Output: /
 4. Deploy
 5. Add Environment Variables: 
-   - TURNSTILE_SECRET_KEY (verplicht)
+   - RESEND_API_KEY (verplicht - je Resend API key)
    - MAIL_TO (optioneel, default: info@avenix.nl)
 6. Add Custom Domain: avenix.nl
 ```
 
 **✅ Klaar!** Website is live op `avenix.nl`
-
----
-
-## 📖 Documentatie
-
-- **Quick Start:** [`QUICK_START.md`](QUICK_START.md) - 30 min deployment
-- **Complete Guide:** [`CLOUDFLARE_DEPLOYMENT_GUIDE.md`](CLOUDFLARE_DEPLOYMENT_GUIDE.md) - Volledige instructies
-- **Checklist:** [`DEPLOYMENT_CHECKLIST.md`](DEPLOYMENT_CHECKLIST.md) - Stap-voor-stap checklist
 
 ---
 
@@ -141,7 +134,7 @@ cd avenix-website
 ### Environment Variables:
 Maak `.env` bestand voor lokaal testen:
 ```env
-TURNSTILE_SECRET_KEY=0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo
+RESEND_API_KEY=re_your_api_key_here
 MAIL_TO=info@avenix.nl
 ```
 
@@ -158,61 +151,48 @@ wrangler pages dev .
 
 ### Overzicht
 Het contactformulier gebruikt:
-- **Cloudflare Turnstile** - Bot bescherming (CAPTCHA alternatief)
-- **MailChannels** - **GRATIS** email verzending specifiek voor Cloudflare Workers
-- **Honeypot field** - Extra spam bescherming
+- **Resend API** - Transactionele email service
+- **Honeypot field** - Spam bescherming
 - **Input validatie** - Server-side validatie
 
-> ✅ **MailChannels** is speciaal gemaakt voor Cloudflare Workers en **100% gratis**. Geen API keys, geen credit card, geen limiet!
+### 1️⃣ Resend API Setup
 
-### 1️⃣ Cloudflare Turnstile Setup
+**Stap 1: Maak Resend account**
+1. Ga naar: https://resend.com
+2. Maak gratis account aan
+3. Verifieer je email adres
 
-**✅ Turnstile is al geconfigureerd!**
+**Stap 2: Maak API Key**
+1. Ga naar: API Keys sectie in Resend dashboard
+2. Klik: "Create API Key"
+3. Geef een naam (bijv. "Avenix Website")
+4. Kopieer de API key (begint met `re_...`)
 
-Jouw Turnstile keys:
-- **Site Key (in code):** `0x4AAAAAAB9A8PLrRD7V4m-s` ✅ Toegevoegd aan `contact.html`
-- **Secret Key (in env vars):** `0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo` ⚠️ Moet je toevoegen aan Cloudflare
-
-**BELANGRIJK - Voeg Secret Key toe aan Cloudflare:**
+**Stap 3: Voeg API Key toe aan Cloudflare**
 ```
 1. Ga naar: Cloudflare Dashboard → Workers & Pages → [avenix-site]
 2. Klik op: Settings → Environment Variables
 3. Klik: Add Variable
 4. Production environment:
-   Name: TURNSTILE_SECRET_KEY
-   Value: 0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo
+   Name: RESEND_API_KEY
+   Value: re_your_api_key_here
 5. Preview environment (optioneel - voor testing):
-   Name: TURNSTILE_SECRET_KEY
-   Value: 0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo
+   Name: RESEND_API_KEY
+   Value: re_your_api_key_here
 6. Klik: Save
 7. Redeploy je site (gebeurt automatisch bij volgende git push)
 ```
 
-> ⚠️ **Security note:** Secret keys horen NOOIT in je code, alleen in Environment Variables!
-
-### 2️⃣ MailChannels Email Setup
-
-**✅ MailChannels werkt out-of-the-box!**
-
-MailChannels is **gratis** en speciaal voor Cloudflare. Geen setup nodig, geen API keys, geen limiet!
-
 **Wat gebeurt er automatisch:**
-- Emails worden verzonden via MailChannels API
-- **From:** `no-reply@avenix.nl`
+- Emails worden verzonden via Resend API
+- **From:** `[Naam] via Avenix <info@avenix.nl>`
 - **To:** `info@avenix.nl` (configureerbaar via `MAIL_TO`)
 - **Reply-to:** Email van de gebruiker (voor directe antwoorden)
 
-**Optioneel - DKIM voor betere deliverability:**
-
-Voor betere email deliverability (minder spam folder), voeg deze DNS record toe:
-
-```
-Type: TXT
-Name: mailchannels._domainkey.avenix.nl
-Value: v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC...
-```
-
-Haal de volledige DKIM key op via: https://mailchannels.zendesk.com/hc/en-us/articles/7122849237389
+**Resend gratis tier:**
+- 3,000 emails per maand gratis
+- 100 emails per dag
+- Perfect voor kleine tot middelgrote websites
 
 **Environment variable (optioneel):**
 ```
@@ -221,15 +201,14 @@ Cloudflare Dashboard → Settings → Environment Variables
 MAIL_TO = info@avenix.nl  (standaard al ingesteld in code)
 ```
 
-### 3️⃣ Environment Variables Overzicht
+### 2️⃣ Environment Variables Overzicht
 
 Voor een complete werkende setup heb je deze variabelen nodig:
 
-| Variable | Required | Description | Jouw waarde |
-|----------|----------|-------------|-------------|
-| `TURNSTILE_SECRET_KEY` | ✅ Ja | Cloudflare Turnstile secret | `0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo` |
-| `MAIL_TO` | ⚪ Optioneel | Ontvanger van formulieren | `info@avenix.nl` (default in code) |
-| `MAIL_FROM` | ⚪ Optioneel | Afzender naam + email | `Avenix <no-reply@avenix.nl>` (default) |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `RESEND_API_KEY` | ✅ Ja | Resend API key (begint met `re_...`) |
+| `MAIL_TO` | ⚪ Optioneel | Ontvanger van formulieren (`info@avenix.nl` default in code) |
 
 **Waar te configureren:**
 ```
@@ -241,9 +220,8 @@ Cloudflare Dashboard
 → Production (en Preview)
 
 Voeg toe:
-MAIL_TO = info@avenix.nl
-MAIL_FROM = Avenix <no-reply@avenix.nl>
-TURNSTILE_SECRET_KEY = 0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo
+RESEND_API_KEY = re_your_api_key_here
+MAIL_TO = info@avenix.nl (optioneel)
 ```
 
 ### 4️⃣ Testen
@@ -252,9 +230,8 @@ TURNSTILE_SECRET_KEY = 0x4AAAAAAB9A8F9VILuu4rEbyD6NXL6t5uo
 ```
 1. Ga naar: https://avenix.nl/contact.html
 2. Vul formulier in
-3. Voltooi Turnstile challenge
-4. Klik "Verstuur bericht"
-5. Check voor succes melding
+3. Klik "Verstuur bericht"
+4. Check voor succes melding
 ```
 
 **Test 2 - Email ontvangst:**
@@ -272,12 +249,11 @@ curl -X POST https://avenix.nl/api/contact \
   -d '{
     "name": "Test Gebruiker",
     "email": "test@example.com",
-    "message": "Dit is een test bericht",
-    "cf-turnstile-response": "ACTUAL_TOKEN_FROM_WIDGET"
+    "message": "Dit is een test bericht"
   }'
 
 # Verwacht response:
-# {"ok":true,"message":"Bericht verzonden!"}
+# {"ok":true}
 ```
 
 **Test 4 - Spam Protection:**
@@ -289,35 +265,13 @@ curl -X POST https://avenix.nl/api/contact \
     "name": "Bot",
     "email": "bot@spam.com",
     "message": "Spam",
-    "website": "filled-by-bot",
-    "cf-turnstile-response": "token"
+    "_form_verification": "filled-by-bot"
   }'
 
 # Verwacht: {"ok":true} maar geen email verzonden
 ```
 
-### 5️⃣ Test Script
-
-We hebben een test script toegevoegd om het contactformulier te testen:
-
-**Run tests (Linux/Mac):**
-```bash
-chmod +x scripts/test-contact.sh
-./scripts/test-contact.sh
-```
-
-**Run tests (Windows Git Bash):**
-```bash
-bash scripts/test-contact.sh
-```
-
-Het script test:
-- ✅ Turnstile verificatie (verwacht: Captcha failed bij fake token)
-- ✅ Validatie van verplichte velden
-- ✅ Honeypot spam protection (bot detectie)
-- ✅ Email format validatie
-
-### 6️⃣ Cloudflare Setup Instructies
+### 3️⃣ Cloudflare Setup Instructies
 
 **SSL/TLS Configuratie:**
 ```
@@ -347,29 +301,30 @@ Cloudflare Dashboard
 → Logs (Real-time logging)
 
 Hier zie je:
-- Turnstile verificatie resultaten
-- MailChannels API responses
+- Resend API responses
 - Server errors en debug info
+- Email verzend status
 ```
 
-### 7️⃣ Troubleshooting
-
-**Turnstile error: "Beveiligingsverificatie mislukt"**
-- ✅ Check of `TURNSTILE_SECRET_KEY` correct is in Environment Variables
-- ✅ Check of sitekey in HTML overeenkomt met Cloudflare Dashboard
-- ✅ Check of domein toegevoegd is in Turnstile settings (www.avenix.nl)
+### 3️⃣ Troubleshooting
 
 **Email niet ontvangen:**
 - ✅ Check spam/junk folder bij info@avenix.nl
+- ✅ Check `RESEND_API_KEY` environment variable (moet beginnen met `re_...`)
 - ✅ Check `MAIL_TO` environment variable (default: info@avenix.nl)
-- ✅ Check Cloudflare Functions logs voor MailChannels errors
+- ✅ Check Cloudflare Functions logs voor Resend API errors
 - ✅ Test formulier opnieuw na 5 minuten (eerste email kan vertraagd zijn)
-- ✅ Voeg DKIM DNS record toe voor betere deliverability
+- ✅ Check Resend dashboard voor email status en eventuele errors
 
 **"Invalid input" error:**
 - ✅ Alle verplichte velden ingevuld? (name, email, message)
-- ✅ Turnstile challenge voltooid?
 - ✅ Email format geldig?
+- ✅ Geen te lange velden? (name max 120, email max 254, message max 5000)
+
+**Resend API error:**
+- ✅ Check of `RESEND_API_KEY` correct is in Environment Variables
+- ✅ Check Resend dashboard voor API key status
+- ✅ Check Resend account limieten (gratis tier: 100 emails/dag)
 
 **Logs bekijken:**
 ```
@@ -379,22 +334,6 @@ Cloudflare Dashboard
 → Functions
 → Logs (Real-time logging)
 ```
-
-### 8️⃣ SPF Record Note
-
-Je huidige SPF record bevat waarschijnlijk `include:_spf.google.com` voor Google Workspace. Dit is prima en kan blijven staan.
-
-**Optioneel:** Als je `include:spf.resend.com` ziet in je SPF record en je gebruikt Resend niet meer, kun je die verwijderen:
-
-```
-Huidige SPF (voorbeeld):
-v=spf1 include:_spf.google.com include:spf.resend.com ~all
-
-Nieuwe SPF (als Resend niet gebruikt wordt):
-v=spf1 include:_spf.google.com ~all
-```
-
-⚠️ **Let op:** Wijzig SPF records alleen als je zeker weet dat Resend niet meer gebruikt wordt. MailChannels heeft geen SPF include nodig (werkt via API).
 
 ---
 
@@ -407,7 +346,6 @@ v=spf1 include:_spf.google.com ~all
 - ✅ **X-Frame-Options: DENY** (Clickjacking protection)
 - ✅ **X-Content-Type-Options: nosniff**
 - ✅ **Referrer-Policy: strict-origin-when-cross-origin**
-- ✅ **Cloudflare Turnstile** (Bot protection)
 - ✅ **Honeypot spam protection**
 - ✅ **Input sanitization** (XSS prevention)
 - ✅ **Email validation** (Regex + length checks)
@@ -512,22 +450,15 @@ git push
 
 ### Contactformulier werkt niet?
 
-**Turnstile error:**
-```
-1. Check TURNSTILE_SECRET_KEY in Environment Variables
-2. Verify sitekey in contact.html matches Cloudflare Dashboard
-3. Check domein in Turnstile settings (avenix.nl)
-4. Test in different browser (clear cache)
-```
-
 **Email niet ontvangen:**
 ```
 1. Check spam/junk folder bij info@avenix.nl
-2. Check Cloudflare Functions logs voor MailChannels errors
-3. Verify MAIL_TO environment variable (optioneel, default: info@avenix.nl)
-4. Test met: curl -X POST https://avenix.nl/api/contact [see above]
-5. Wacht 5-10 minuten (eerste email kan vertraagd zijn)
-6. Voeg DKIM DNS record toe voor betere deliverability
+2. Check Cloudflare Functions logs voor Resend API errors
+3. Verify RESEND_API_KEY environment variable (moet beginnen met re_...)
+4. Verify MAIL_TO environment variable (optioneel, default: info@avenix.nl)
+5. Test met: curl -X POST https://avenix.nl/api/contact [see above]
+6. Check Resend dashboard voor email status
+7. Wacht 5-10 minuten (eerste email kan vertraagd zijn)
 ```
 
 **Form error in browser:**
@@ -535,8 +466,8 @@ git push
 1. Open browser console (F12)
 2. Check Network tab → /api/contact request
 3. Look for error response: {"error": "..."}
-4. Verify Turnstile widget loaded (check Elements tab)
-5. Check if form fields have correct name attributes
+4. Check if form fields have correct name attributes
+5. Verify alle verplichte velden zijn ingevuld
 ```
 
 **Deployment issues:**
@@ -553,8 +484,6 @@ git push
 3. Retry deployment
 4. Clear Cloudflare cache
 
-**Meer troubleshooting:** Zie `CLOUDFLARE_DEPLOYMENT_GUIDE.md`
-
 ---
 
 ## 📞 Support & Links
@@ -562,13 +491,12 @@ git push
 ### Documentatie:
 - **Cloudflare Pages:** https://developers.cloudflare.com/pages/
 - **Cloudflare Workers:** https://developers.cloudflare.com/workers/
-- **Cloudflare Turnstile:** https://developers.cloudflare.com/turnstile/
-- **MailChannels:** https://mailchannels.com
-- **MailChannels DKIM Setup:** https://mailchannels.zendesk.com/hc/en-us/articles/7122849237389
+- **Resend:** https://resend.com/docs
+- **Resend API Reference:** https://resend.com/docs/api-reference/emails/send-email
 
 ### Community:
 - **Cloudflare Discord:** https://discord.gg/cloudflaredev
-- **MailChannels Support:** https://mailchannels.zendesk.com/hc/en-us
+- **Resend Support:** https://resend.com/support
 
 ---
 
