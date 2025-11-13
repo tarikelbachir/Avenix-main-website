@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles blijven in styles.css */
+/* Dit bestand is alleen voor Tailwind compilatie */
+

@@ -221,74 +221,51 @@ html {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Desktop Nav Scrolled State */
+/* ===== MODERN DESKTOP NAVBAR ===== */
 #desktopNav {
     transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 backdrop-filter 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                padding 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     contain: layout style paint;
 }
 
 #desktopNav.scrolled {
-    background: hsl(214, 32%, 18%, 0.95);
+    background: hsl(217, 33%, 7%, 0.95);
     backdrop-filter: blur(12px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(250, 204, 21, 0.1);
-    top: 1rem;
-    padding: 0.5rem 2rem;
-    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 100%, 24px 100%);
-    will-change: background, backdrop-filter, box-shadow;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-#desktopNav:not(.scrolled) {
-    will-change: auto;
+/* Modern Nav Links - No borders, only color transitions */
+.nav-link-modern {
+    position: relative;
+    transition: color 0.3s ease;
 }
 
-#desktopNav.scrolled .nav-link {
-    color: #FFFFFF !important;
+.nav-link-modern:hover {
+    color: hsl(45, 100%, 51%) !important;
 }
 
-#desktopNav.scrolled .nav-link:hover,
-#desktopNav.scrolled #dienstenBtn:hover {
-    color: #FACC15 !important;
+/* CTA Button Modern */
+.cta-button-modern {
+    border: none;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.2);
 }
 
-#desktopNav.scrolled .nav-link::after,
-#desktopNav.scrolled #dienstenBtn::after {
-    background: linear-gradient(90deg, #F59E0B 0%, #FACC15 50%, #F59E0B 100%);
-    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+.cta-button-modern:hover {
+    box-shadow: 0 6px 20px rgba(250, 204, 21, 0.3);
+    transform: translateY(-1px);
 }
 
-#desktopNav.scrolled img {
-    will-change: filter;
-    filter: brightness(0) invert(1) !important;
+/* Phone Link Modern */
+.phone-link-modern {
+    border: none;
+    outline: none;
 }
 
-#desktopNav.scrolled .cta-text {
-    color: hsl(217, 33%, 7%) !important;
-}
-
-#desktopNav.scrolled .nav-links-wrapper {
-    background: hsl(214, 32%, 18%, 0.95);
-}
-
+/* Logo adjustments */
 #desktopNav.scrolled .logo-container img {
-    transform: scale(0.85);
-}
-
-/* Contact Hub Scrolled State */
-#desktopNav.scrolled .phone-badge {
-    background: hsl(214, 32%, 18%, 0.85);
-}
-
-#desktopNav.scrolled .phone-badge:hover {
-    background: hsl(214, 32%, 18%, 0.95);
-}
-
-#desktopNav.scrolled .phone-badge::after {
-    background: linear-gradient(90deg, #FACC15 0%, #F59E0B 50%, #FACC15 100%);
-    box-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
+    filter: brightness(0) invert(1) !important;
 }
 
 /* Logo crop - removes whitespace */
@@ -299,277 +276,6 @@ html {
     width: auto;
 }
 
-/* ===== NAVBAR HOVER ANIMATIONS ===== */
-
-/* Nav Links - Slide-in underline effect */
-.nav-link {
-    position: relative;
-    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-    display: inline-block;
-}
-
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    right: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #FACC15 0%, #F59E0B 50%, #FACC15 100%);
-    background-size: 200% 100%;
-    transition: width 0.35s cubic-bezier(0.23, 1, 0.32, 1),
-                background-position 0.5s ease;
-    box-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
-}
-
-.nav-link:hover::after {
-    width: 100%;
-    background-position: 100% 0;
-}
-
-.nav-link:hover {
-    transform: translateY(-1px);
-    text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
-    color: rgba(255, 255, 255, 1) !important;
-}
-
-/* Active nav link state */
-.nav-link.active::after {
-    width: 100%;
-}
-
-.nav-link:hover,
-.nav-link:hover::after {
-    will-change: transform, width;
-}
-
-.nav-link:not(:hover),
-.nav-link:not(:hover)::after {
-    will-change: auto;
-}
-
-/* Diensten button (dropdown trigger) consistency */
-#dienstenBtn {
-    position: relative;
-    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-#dienstenBtn::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    right: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #FACC15 0%, #F59E0B 50%, #FACC15 100%);
-    background-size: 200% 100%;
-    transition: width 0.35s cubic-bezier(0.23, 1, 0.32, 1),
-                background-position 0.5s ease;
-    box-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
-}
-
-#dienstenBtn:hover::after {
-    width: 100%;
-    background-position: 100% 0;
-}
-
-#dienstenBtn:hover {
-    transform: translateY(-1px);
-    text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);
-}
-
-#dienstenBtn svg {
-    transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-/* Nav Links Wrapper - Subtle glow on hover */
-.nav-links-wrapper {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-links-wrapper:hover {
-    background: hsl(214, 32%, 18%, 0.9);
-    box-shadow: 0 0 20px rgba(250, 204, 21, 0.2);
-}
-
-/* CTA Button - Underline effect like nav links */
-.btn-hero-primary {
-    position: relative;
-    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.btn-hero-primary::before {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #FACC15 0%, #F59E0B 50%, #FACC15 100%);
-    background-size: 200% 100%;
-    transition: width 0.35s cubic-bezier(0.23, 1, 0.32, 1),
-                background-position 0.5s ease;
-    box-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
-    z-index: 10;
-}
-
-.btn-hero-primary:hover::before {
-    width: 100%;
-    background-position: 100% 0;
-}
-
-.btn-hero-primary:hover {
-    transform: translateY(-1px);
-}
-
-/* Scrolled state for navbar CTA */
-#desktopNav.scrolled .btn-hero-primary::before {
-    background: linear-gradient(90deg, #F59E0B 0%, #FACC15 50%, #F59E0B 100%);
-    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
-}
-
-/* Keep gradient overlay for visual consistency */
-.btn-hero-primary .gradient-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, #FACC15 0%, #F59E0B 50%, #FACC15 100%);
-    background-size: 200% 200%;
-    animation: gradientFlow 4s ease infinite;
-    z-index: 0;
-    transition: all 0.4s ease;
-}
-
-@keyframes gradientFlow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
-
-/* Shine overlay effect */
-.btn-hero-primary .shine-overlay {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(255, 255, 255, 0.3) 50%, 
-        transparent 100%);
-    z-index: 2;
-    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-hero-primary:hover .shine-overlay {
-    left: 100%;
-}
-
-.btn-hero-primary:hover .gradient-overlay {
-    background: linear-gradient(135deg, #F59E0B 0%, #FACC15 50%, #F59E0B 100%);
-    animation: gradientFlow 2s ease infinite;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Text styling - ensure it's above everything */
-.btn-hero-primary .cta-text {
-    position: relative;
-    z-index: 15;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.btn-hero-primary:hover .cta-text {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-/* Navbar Flow - Subtle connecting glow effect */
-#desktopNav > div:hover .nav-links-wrapper {
-    filter: brightness(1.05);
-}
-
-/* Logo - Subtle rotation and scale */
-.logo-container {
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.logo-container:hover img {
-    filter: brightness(0) invert(1) drop-shadow(0 0 12px rgba(250, 204, 21, 0.4));
-}
-
-/* ===== CONTACT HUB - SIDE BY SIDE ===== */
-
-/* Container */
-.contact-hub-sidebyside {
-    display: flex;
-    align-items: center;
-}
-
-/* Phone Badge */
-.phone-badge {
-    position: relative;
-    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.phone-badge::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #FACC15 0%, #F59E0B 50%, #FACC15 100%);
-    background-size: 200% 100%;
-    transition: width 0.35s cubic-bezier(0.23, 1, 0.32, 1),
-                background-position 0.5s ease;
-    box-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
-    z-index: 10;
-}
-
-.phone-badge:hover::after {
-    width: 100%;
-    background-position: 100% 0;
-}
-
-.phone-badge:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.2);
-}
-
-/* Phone icon animation */
-.phone-badge svg {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center;
-}
-
-.phone-badge:hover svg {
-    animation: phoneRing 0.6s ease-in-out;
-}
-
-@keyframes phoneRing {
-    0%, 100% { transform: rotate(0deg) scale(1); }
-    10%, 30%, 50%, 70%, 90% { transform: rotate(-8deg) scale(1.1); }
-    20%, 40%, 60%, 80% { transform: rotate(8deg) scale(1.1); }
-}
-
-/* Responsive - Hide phone number text on smaller screens */
-@media (max-width: 1280px) {
-    .phone-badge span {
-        display: none;
-    }
-    
-    .phone-badge {
-        padding: 0.625rem !important;
-    }
-}
-
-/* Show phone number on larger screens */
-@media (min-width: 1281px) {
-    .phone-badge span {
-        display: inline;
-    }
-}
 
 
 /* ===== HERO GEOMETRIC BACKGROUND ===== */
@@ -1063,22 +769,6 @@ section .clip-path-button:hover {
         gap: 0.75rem !important;
     }
     
-    /* Navbar Links - Kleiner */
-    #desktopNav .nav-link {
-        font-size: 0.75rem !important;
-        padding: 0.25rem 0 !important;
-    }
-    
-    #desktopNav .nav-links-wrapper {
-        padding: 0.5rem 1rem !important;
-        gap: 1rem !important;
-    }
-    
-    /* Navbar CTA Button - Compacter */
-    #desktopNav .btn-hero-primary {
-        font-size: 0.75rem !important;
-        padding: 0.5rem 0.875rem !important;
-    }
     
     /* Logo - Kleiner */
     .logo-container {
@@ -1115,132 +805,6 @@ section .clip-path-button:hover {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* Hamburger animatie - Performance optimized */
-#newMobileMenuBtn .new-menu-line {
-    transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-#newMobileMenuBtn.active .new-menu-line:nth-child(1) {
-    transform: translateY(6px) rotate(45deg);
-}
-
-#newMobileMenuBtn.active .new-menu-line:nth-child(2) {
-    opacity: 0;
-}
-
-#newMobileMenuBtn.active .new-menu-line:nth-child(3) {
-    transform: translateY(-6px) rotate(-45deg);
-}
-
-#newMobileMenu {
-    transform: translateY(-100%);
-    transition: transform 0.25s ease;
-}
-
-#newMobileMenu.menu-open {
-    transform: translateY(0);
-}
-
-#newMobileMenuOverlay {
-    transition: opacity 0.25s ease, visibility 0.25s ease;
-}
-
-#newMobileMenuOverlay.active {
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* Close button altijd klikbaar */
-#closeMobileMenuBtn {
-    pointer-events: auto;
-    z-index: 100;
-    position: relative;
-}
-
-/* Verberg originele header wanneer menu open is - gebruik body class i.p.v. :has() */
-body.mobile-menu-open .lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) {
-    visibility: hidden;
-    pointer-events: none;
-}
-
-body.mobile-menu-open .lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay) > .mobile-nav-header {
-    opacity: 0;
-}
-
-/* Dropdown button states */
-.new-dropdown-btn {
-    background: rgba(255, 255, 255, 0.05) !important;
-    transition: background-color 0.2s ease;
-}
-
-.new-dropdown-btn.open {
-    background: rgba(250, 204, 21, 0.15) !important;
-}
-
-.new-dropdown-btn .w-10.h-10 {
-    transition: background-color 0.2s ease;
-    background: rgba(255, 255, 255, 0.1) !important;
-}
-
-.new-dropdown-btn.open .w-10.h-10 {
-    background: rgba(250, 204, 21, 0.2) !important;
-}
-
-.new-dropdown-btn .w-10.h-10 svg {
-    transition: color 0.2s ease;
-    color: white !important;
-}
-
-.new-dropdown-btn.open .w-10.h-10 svg {
-    color: rgb(250, 204, 21) !important;
-}
-
-.new-dropdown-btn .new-dropdown-arrow {
-    transition: transform 0.2s ease, color 0.2s ease;
-    color: rgba(255, 255, 255, 0.4) !important;
-}
-
-.new-dropdown-btn.open .new-dropdown-arrow {
-    transform: rotate(180deg);
-    color: rgb(250, 204, 21) !important;
-}
-
-/* Dropdown content - simpel display i.p.v. max-height animatie */
-.new-dropdown-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.25s ease, opacity 0.2s ease;
-    opacity: 0;
-}
-
-.new-dropdown-content.open {
-    max-height: 500px;
-    margin-top: 0.75rem;
-    opacity: 1;
-}
-
-/* Menu items - geen animatie, gewoon direct zichtbaar */
-.mobile-menu-item {
-    /* Geen animatie nodig - gewoon direct zichtbaar */
-}
-
-/* Custom scrollbar voor menu */
-.mobile-menu-scroll::-webkit-scrollbar {
-    width: 6px;
-}
-
-.mobile-menu-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.mobile-menu-scroll::-webkit-scrollbar-thumb {
-    background: rgba(250, 204, 21, 0.3);
-    border-radius: 10px;
-}
-
-.mobile-menu-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(250, 204, 21, 0.5);
-}
 
 /* Buttons */
 .btn-primary {
@@ -1507,6 +1071,245 @@ body.mobile-menu-open .lg\:hidden:not(#newMobileMenu):not(#newMobileMenuOverlay)
 
 #dienstenSubmenu[style*="opacity: 0"] {
   will-change: auto;
+}
+
+/* ===== MOBILE MENU - Clean Implementation ===== */
+
+/* Menu Toggle Button */
+#mobileMenuToggle {
+    will-change: transform;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+#mobileMenuToggle:hover .mobile-menu-line {
+    background: hsl(45, 100%, 51%);
+}
+
+#mobileMenuToggle[aria-expanded="true"] .mobile-menu-line:nth-child(1) {
+    transform: translateY(0.5rem) rotate(45deg);
+}
+
+#mobileMenuToggle[aria-expanded="true"] .mobile-menu-line:nth-child(2) {
+    opacity: 0;
+    transform: scale(0);
+}
+
+#mobileMenuToggle[aria-expanded="true"] .mobile-menu-line:nth-child(3) {
+    transform: translateY(-0.5rem) rotate(-45deg);
+}
+
+#mobileMenuToggle[aria-expanded="true"]:hover .mobile-menu-line {
+    background: hsl(45, 100%, 51%);
+}
+
+/* Overlay */
+#mobileMenuOverlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Menu Panel */
+#mobileMenu {
+    will-change: transform;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
+#mobileMenu.is-open {
+    transform: translateX(0);
+}
+
+
+/* Menu Links */
+.mobile-menu-link {
+    position: relative;
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.mobile-menu-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-menu-link:focus-visible {
+    outline: 2px solid rgba(255, 204, 3, 0.5);
+    outline-offset: -2px;
+}
+
+/* Dropdown */
+.mobile-menu-dropdown {
+    border: none;
+}
+
+.mobile-menu-dropdown-content {
+    max-height: none;
+    opacity: 1;
+}
+
+.mobile-menu-dropdown-content a {
+    border: none;
+}
+
+/* Close Button */
+#mobileMenuClose {
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+#mobileMenuClose:focus-visible {
+    outline: 2px solid rgba(255, 204, 3, 0.5);
+    outline-offset: 2px;
+}
+
+/* Scrollbar Styling */
+#mobileMenu::-webkit-scrollbar {
+    width: 6px;
+}
+
+#mobileMenu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#mobileMenu::-webkit-scrollbar-thumb {
+    background: rgba(255, 204, 3, 0.3);
+    border-radius: 3px;
+}
+
+#mobileMenu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 204, 3, 0.5);
+}
+
+/* ===== ROTATING TEXT ANIMATION ===== */
+#rotatingText {
+    display: inline-block;
+    position: relative;
+    opacity: 1;
+    transform: translateY(0);
+    min-width: 200px;
+    text-align: left;
+}
+
+/* ===== HERO CODE ELEMENTS ===== */
+:root {
+    --code-element-opacity: 0.15;
+    --code-element-size: clamp(3rem, 8vw, 6rem);
+    --code-element-color: hsl(45, 100%, 51%);
+}
+
+.hero-code-elements {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.code-bracket,
+.code-tag,
+.code-prompt,
+.code-function {
+    position: absolute;
+    font-family: 'Courier New', monospace;
+    font-weight: 300;
+    color: var(--code-element-color);
+    opacity: var(--code-element-opacity);
+    font-size: var(--code-element-size);
+    user-select: none;
+    will-change: transform;
+}
+
+/* Posities - makkelijk aan te passen */
+.code-bracket-1 {
+    top: 20%;
+    left: 5%;
+    transform: rotate(-15deg);
+}
+
+.code-bracket-2 {
+    bottom: 25%;
+    right: 10%;
+    transform: rotate(15deg);
+}
+
+.code-tag-1 {
+    top: 50%;
+    right: 8%;
+    transform: rotate(25deg);
+}
+
+.code-prompt-1 {
+    bottom: 15%;
+    left: 8%;
+    transform: rotate(-10deg);
+}
+
+.code-bracket-3 {
+    top: 35%;
+    left: 12%;
+    transform: rotate(20deg);
+}
+
+.code-bracket-4 {
+    bottom: 40%;
+    right: 15%;
+    transform: rotate(-20deg);
+}
+
+.code-tag-2 {
+    top: 70%;
+    left: 15%;
+    transform: rotate(-30deg);
+}
+
+.code-prompt-2 {
+    top: 15%;
+    right: 20%;
+    transform: rotate(15deg);
+}
+
+.code-function-1 {
+    bottom: 50%;
+    left: 20%;
+    transform: rotate(10deg);
+}
+
+.code-function-2 {
+    top: 60%;
+    right: 25%;
+    transform: rotate(-25deg);
+}
+
+/* Optioneel: zeer subtiele float animatie (alleen als nodig) */
+@media (prefers-reduced-motion: no-preference) {
+    .code-bracket-1 {
+        animation: subtleFloat 20s ease-in-out infinite;
+    }
+    
+    .code-bracket-2 {
+        animation: subtleFloat 25s ease-in-out infinite reverse;
+    }
+    
+    .code-bracket-3 {
+        animation: subtleFloat 22s ease-in-out infinite;
+    }
+    
+    .code-tag-1 {
+        animation: subtleFloat 18s ease-in-out infinite reverse;
+    }
+    
+    .code-function-1 {
+        animation: subtleFloat 24s ease-in-out infinite;
+    }
+}
+
+@keyframes subtleFloat {
+    0%, 100% { transform: translateY(0) rotate(-15deg); }
+    50% { transform: translateY(-20px) rotate(-12deg); }
 }
 
 /* ===== EINDE VAN ALGEMENE STYLES ===== */

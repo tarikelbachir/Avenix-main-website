@@ -1,0 +1,13 @@
+{
+  "name": "avenix-website",
+  "version": "1.0.0",
+  "description": "Avenix website - Gecompileerde Tailwind CSS",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
+
