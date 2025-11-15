@@ -1,6 +1,13 @@
 # Cloudflare Pages Headers Configuration
 # https://developers.cloudflare.com/pages/platform/headers/
 
+# Block API endpoints from caching and indexing
+/api/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
 # Global security headers
 /*
   X-Content-Type-Options: nosniff
@@ -14,9 +21,11 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+# CSS files (1 week with revalidation - voor snellere updates)
 /css/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=604800, must-revalidate
 
+# JS files (1 year)
 /js/*
   Cache-Control: public, max-age=31536000, immutable
 

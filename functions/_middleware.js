@@ -28,13 +28,8 @@ export async function onRequest(context) {
   // HSTS (HTTP Strict Transport Security)
   newHeaders.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   
-  // Cache headers for static assets
-  const url = new URL(context.request.url);
-  if (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/css/') || url.pathname.startsWith('/js/')) {
-    newHeaders.set('Cache-Control', 'public, max-age=31536000, immutable');
-  } else if (url.pathname.endsWith('.html')) {
-    newHeaders.set('Cache-Control', 'public, max-age=3600, must-revalidate');
-  }
+  // Cache headers worden nu alleen in _headers beheerd
+  // Dit voorkomt conflicten en zorgt voor consistente caching
 
   return new Response(response.body, {
     status: response.status,
